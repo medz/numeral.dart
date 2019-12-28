@@ -5,34 +5,72 @@ class Numeral {
 
   Numeral._(this._number);
 
+  /// Create [Numeral] class.
+  ///
+  /// The Factory create a [Numeral] class instance.
+  ///
+  /// [number] is num [Type].
+  ///
+  /// return [Numeral] instance.
   factory Numeral(num number) {
-    assert(number is num, 'The data to be processed must be passed in a [num].');
+    assert(
+        number is num, 'The data to be processed must be passed in a [num].');
 
     return Numeral._(number);
   }
 
+  /// Get a [number] for double value.
+  ///
+  /// Get the [_number] to [double] Type value.
   double get number => _number.toDouble();
 
+  /// Format [number] to beautiful [String].
+  ///
+  /// E.g:
+  /// ```dart
+  /// Numeral(1000).value(); // -> 1K
+  /// ```
+  ///
+  /// return a [String] type.
   String value() {
-    double value = number;
-    String abbr = '';
+    // Formated value.
+    var value = number;
+
+    // String suffix.
+    var abbr = '';
+
+    // If number > 1 trillion.
     if (number >= 1000000000000) {
       value = number / 1000000000000;
       abbr = 'T';
+
+      // If number > 1 billion.
     } else if (number >= 1000000000) {
       value = number / 1000000000;
       abbr = 'B';
+
+      // If number > 1 million.
     } else if (number >= 1000000) {
       value = number / 1000000;
       abbr = 'M';
+
+      // If number > 1 thousand.
     } else if (number >= 1000) {
       value = number / 1000;
       abbr = 'K';
     }
 
-    return "${_removeEndsZore(value.toStringAsFixed(3))}$abbr";
+    return _removeEndsZore(value.toStringAsFixed(3)) + abbr;
   }
 
+  /// Remove value ends with zore.
+  ///
+  /// Remove formated value ends with zore,
+  /// replace to zore string.
+  ///
+  /// [value] type is [String].
+  ///
+  /// return a [String] type.
   String _removeEndsZore(String value) {
     if (value.length == 1) {
       return value;
@@ -45,6 +83,11 @@ class Numeral {
     return value;
   }
 
+  /// Get formated value.
+  ///
+  /// Get the [value] function value.
+  ///
+  /// return a [String] type.
   @override
   String toString() => value();
 }

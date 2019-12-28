@@ -1,3 +1,8 @@
-## [0.0.1]
+## [1.0.0]
 
-* basis format number.
+```dart
+import 'package:numeral/numeral.dart';
+
+Numeral(1000).value(); // -> 1K
+```
+
