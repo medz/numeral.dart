@@ -1,0 +1,13 @@
+name: numeral
+description: >-
+  A Dart library for formatting and manipulating numbers.
+version: 0.0.1
+homepage: https://github.com/medz/numeral.dart
+repository: https://github.com/medz/numeral.dart
+issue_tracker: https://github.com/medz/numeral.dart/issues
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dev_dependencies:
+  test: any
