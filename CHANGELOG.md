@@ -1,6 +1,6 @@
 ## [1.0.2]
 
-- Upload docs.
+- update docs.
 
 ## [1.0.0]
 
