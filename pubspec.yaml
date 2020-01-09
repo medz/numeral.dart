@@ -1,7 +1,6 @@
 name: numeral
 description: >-
-  A Dart library for formatting and manipulating numbers.
-  Format number into beautiful string.
+  A Dart library for Format number into beautiful string.
 
 version: 1.0.1
 homepage: https://github.com/medz/numeral.dart
