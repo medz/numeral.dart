@@ -35,27 +35,28 @@ class Numeral {
   String value() {
     // Formated value.
     var value = number;
+    var absolute = number.abs();
 
     // String suffix.
     var abbr = '';
 
     // If number > 1 trillion.
-    if (number >= 1000000000000) {
+    if (absolute >= 1000000000000) {
       value = number / 1000000000000;
       abbr = 'T';
 
       // If number > 1 billion.
-    } else if (number >= 1000000000) {
+    } else if (absolute >= 1000000000) {
       value = number / 1000000000;
       abbr = 'B';
 
       // If number > 1 million.
-    } else if (number >= 1000000) {
+    } else if (absolute >= 1000000) {
       value = number / 1000000;
       abbr = 'M';
 
       // If number > 1 thousand.
-    } else if (number >= 1000) {
+    } else if (absolute >= 1000) {
       value = number / 1000;
       abbr = 'K';
     }
