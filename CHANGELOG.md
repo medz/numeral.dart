@@ -1,3 +1,7 @@
+## [1.0.3]
+
+- Support negative values
+
 ## [1.0.2]
 
 - update docs.
