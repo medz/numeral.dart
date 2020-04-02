@@ -50,5 +50,9 @@ void main() {
     test('T abbr', () {
       expect(Numeral(1000000000000).value(), equals('1T'));
     });
+
+    test('Negative value', () {
+      expect(Numeral(-1000).value(), equals('-1K'));
+    });
   });
 }
