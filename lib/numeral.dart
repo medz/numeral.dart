@@ -32,7 +32,7 @@ class Numeral {
   /// ```
   ///
   /// return a [String] type.
-  String value() {
+  String value({int fractionDigits = 3}) {
     // Formated value.
     var value = number;
     var absolute = number.abs();
@@ -61,7 +61,7 @@ class Numeral {
       abbr = 'K';
     }
 
-    return _removeEndsZore(value.toStringAsFixed(3)) + abbr;
+    return _removeEndsZore(value.toStringAsFixed(fractionDigits)) + abbr;
   }
 
   /// Remove value ends with zore.
