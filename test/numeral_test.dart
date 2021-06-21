@@ -3,14 +3,6 @@ import 'package:numeral/numeral.dart';
 
 void main() {
   group('Factory create', () {
-    test('Failed assertion.', () {
-      try {
-        Numeral(null);
-      } catch (_) {
-        expect(true, isTrue);
-      }
-    });
-
     test('class', () {
       expect(Numeral(0), isA<Numeral>());
     });
