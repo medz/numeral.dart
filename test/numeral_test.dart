@@ -46,5 +46,10 @@ void main() {
     test('Negative value', () {
       expect(Numeral(-1000).value(), equals('-1K'));
     });
+
+    test('Fraction Digits', () {
+      expect(Numeral(1234).value(), equals('1.234K'));
+      expect(Numeral(1234).value(fractionDigits: 2), equals('1.23K'));
+    });
   });
 }
