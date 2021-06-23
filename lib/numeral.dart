@@ -64,21 +64,21 @@ class Numeral {
     return _removeEndsZore(value.toStringAsFixed(fractionDigits)) + abbr;
   }
 
-  /// Remove value ends with zore.
+  /// Remove value ends with zero.
   ///
-  /// Remove formated value ends with zore,
-  /// replace to zore string.
+  /// Remove formated value ends with zero,
+  /// replace to zero string.
   ///
   /// [value] type is [String].
   ///
   /// return a [String] type.
-  String _removeEndsZore(String value) {
+  String _removeEndsZero(String value) {
     if (value.length == 1) {
       return value;
     } else if (value.endsWith('.')) {
       return value.substring(0, value.length - 1);
     } else if (value.endsWith('0')) {
-      return _removeEndsZore(value.substring(0, value.length - 1));
+      return _removeEndsZero(value.substring(0, value.length - 1));
     }
 
     return value;
