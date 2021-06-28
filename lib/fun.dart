@@ -1,5 +1,6 @@
 library numeral;
 
+import 'src/constants.dart';
 import 'src/numeral.dart';
 
 /// Get a formated string on numeral.
@@ -11,5 +12,5 @@ import 'src/numeral.dart';
 /// ```dart
 /// numeral(10000) // => 10K
 /// ```
-String numeral(num value, {int fractionDigits = 3}) =>
+String numeral(num value, {int fractionDigits = DEFAULT_FRACTION_DIGITS}) =>
     Numeral(value).value(fractionDigits: fractionDigits);
