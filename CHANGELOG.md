@@ -1,3 +1,8 @@
+## [1.2.0]
+
+- Feat: support `numeral` function on num.
+- Feat: Add a `numeral` function.
+
 ## [1.0.4]
 
 - update libs.
