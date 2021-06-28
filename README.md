@@ -33,3 +33,20 @@ See [Example](example)
 
 The component is open-sourced software licensed under the [MIT license](LICENSE).
 
+
+## Using `numeral` function
+
+```
+import 'package:numeral/fun.dart';
+
+numeral(10000); /// 10K
+```
+
+### Extension
+
+```
+import 'package:numeral/ext.dart';
+
+
+10000.number(); // 10K
+```
