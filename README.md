@@ -4,7 +4,7 @@ Format number into beautiful string.
 
 ## Install
 
-See [pub.dev Numeral install document](https://pub.dev/packages/numeral#-installing-tab-)
+See [pub.dev Numeral install document](https://pub.dev/packages/numeral/install)
 
 ## Getting Started
 
