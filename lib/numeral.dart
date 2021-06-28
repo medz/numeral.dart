@@ -61,7 +61,7 @@ class Numeral {
       abbr = 'K';
     }
 
-    return _removeEndsZore(value.toStringAsFixed(fractionDigits)) + abbr;
+    return _removeEndsZero(value.toStringAsFixed(fractionDigits)) + abbr;
   }
 
   /// Remove value ends with zero.
