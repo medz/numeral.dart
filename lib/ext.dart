@@ -1,4 +1,4 @@
-library numeral;
+library extension;
 
 import 'src/constants.dart';
 import 'src/numeral.dart';
