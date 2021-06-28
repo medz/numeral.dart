@@ -29,12 +29,8 @@ Numeral(1000000000000).value(); // > 1T
 
 See [Example](example)
 
-## License
 
-The component is open-sourced software licensed under the [MIT license](LICENSE).
-
-
-## Using `numeral` function
+### Using `numeral` function
 
 ```
 import 'package:numeral/fun.dart';
@@ -50,3 +46,7 @@ import 'package:numeral/ext.dart';
 
 10000.number(); // 10K
 ```
+
+## License
+
+The component is open-sourced software licensed under the [MIT license](LICENSE).
