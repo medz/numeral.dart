@@ -51,5 +51,17 @@ void main() {
       expect(Numeral(1234).value(), equals('1.234K'));
       expect(Numeral(1234).value(fractionDigits: 2), equals('1.23K'));
     });
+
+    test('20_000 is formatted', () {
+      expect(Numeral(20000).value(fractionDigits: 0), equals('20K'));
+    });
+
+    test('200_000 is formatted', () {
+      expect(Numeral(200000).value(fractionDigits: 0), equals('200K'));
+    });
+
+    test('20_000_000 is formatted', () {
+      expect(Numeral(20000000).value(fractionDigits: 0), equals('20M'));
+    });
   });
 }

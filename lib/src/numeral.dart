@@ -49,9 +49,11 @@ class Numeral {
   ///
   /// return a [String] type.
   String _removeEndsZero(String value) {
-    if (value.length == 1) {
+    if (value.indexOf('.') == -1) {
       return value;
-    } else if (value.endsWith('.')) {
+    }
+
+    if (value.endsWith('.')) {
       return value.substring(0, value.length - 1);
     } else if (value.endsWith('0')) {
       return _removeEndsZero(value.substring(0, value.length - 1));

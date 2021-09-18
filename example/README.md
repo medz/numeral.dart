@@ -22,4 +22,6 @@ Numeral(1000000000000).value(); // > 1T
 
 // number <= 0
 Numeral(-1000).value(); // > -1K
+
+numeral(20000); // > 20K
 ```
