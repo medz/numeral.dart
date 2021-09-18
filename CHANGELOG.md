@@ -1,3 +1,7 @@
+## [1.2.5]
+
+ * Fixed [#7](https://github.com/medz/numeral.dart/issues/7) Formatted value is wrong when fractionDigits is set to 0.
+
 ## [1.2.1]
 
 optimization.
