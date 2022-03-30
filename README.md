@@ -2,6 +2,9 @@
 
 A Dart library for Format number into beautiful string, Format the number into a beautiful, readable and short string.
 
+[![Dart CI](https://github.com/medz/numeral.dart/actions/workflows/dart.yml/badge.svg)](https://github.com/medz/numeral.dart/actions/workflows/dart.yml)
+![Pub Version](https://img.shields.io/pub/v/numeral?label=pub.dev&style=flat)
+
 ## Install
 
 See [pub.dev Numeral install document](https://pub.dev/packages/numeral/install)
