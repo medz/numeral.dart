@@ -1,6 +1,6 @@
 # Numeral
 
-Format number into beautiful string.
+A Dart library for Format number into beautiful string, Format the number into a beautiful, readable and short string.
 
 ## Install
 
