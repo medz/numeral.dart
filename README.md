@@ -32,7 +32,7 @@ See [Example](example)
 
 ### Using `numeral` function
 
-```
+```dart
 import 'package:numeral/fun.dart';
 
 numeral(10000); /// 10K
@@ -40,7 +40,7 @@ numeral(10000); /// 10K
 
 ### Extension
 
-```
+```dart
 import 'package:numeral/ext.dart';
 
 
