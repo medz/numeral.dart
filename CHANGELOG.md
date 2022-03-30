@@ -1,3 +1,7 @@
+## [2.0.1]
+
+* Fixed readme extension.
+
 ## [2.0.0]
 
 💥 Refactoring

@@ -44,7 +44,7 @@ numeral(10000); /// 10K
 import 'package:numeral/ext.dart';
 
 
-10000.number(); // 10K
+10000.numeral(); // 10K
 ```
 
 ## License
