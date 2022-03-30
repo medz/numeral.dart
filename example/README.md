@@ -1,27 +1,31 @@
 # Example
 
-Examples come from [main.dart](main.dart)
-
-## Example
-
 ```dart
-// number < 1 thousand.
-Numeral(520).value(); // > 520
+import 'package:numeral/numeral.dart';
 
-// number >= 1 thousand.
-Numeral(1314).value(); // > 1.314K
+void main() {
+  // number < 1 thousand.
+  Numeral(520).format(); // > 520
 
-// number >= 1 million.
-Numeral(1000000).value(); // > 1M
+  // number >= 1 thousand.
+  Numeral(1314).format(); // > 1.314K
 
-// number >= 1 billion.
-Numeral(1000000000).value(); // > 1B
+  // number >= 1 million.
+  Numeral(1000000).format(); // > 1M
 
-// number >= 1 trillion.
-Numeral(1000000000000).value(); // > 1T
+  // number >= 1 billion.
+  Numeral(1000000000).format(); // > 1B
 
-// number <= 0
-Numeral(-1000).value(); // > -1K
+  // number >= 1 trillion.
+  Numeral(1000000000000).format(); // > 1T
 
-numeral(20000); // > 20K
+  // number <= 0
+  Numeral(-1000).format(); // > -1K
+
+  // Using function
+  print(numeral(1314)); // > 1.314K
+
+  // Using num extension
+  print(1314.numeral()); // > 1.314K
+}
 ```

@@ -2,66 +2,62 @@ import "package:test/test.dart";
 import 'package:numeral/numeral.dart';
 
 void main() {
-  group('Factory create', () {
+  group('Constructor', () {
     test('class', () {
       expect(Numeral(0), isA<Numeral>());
     });
   });
 
-  group('get .menber', () {
+  group('get .numeral', () {
     test('is double.', () {
-      expect(Numeral(0).number is double, isTrue);
+      expect(Numeral(0).numeral, isA<num>());
     });
 
     test('return double.', () {
-      expect(Numeral(0).number, equals(0..toDouble()));
+      expect(Numeral(0).numeral, equals(0.toDouble()));
     });
   });
 
-  group('.value', () {
-    test('is String.', () {
-      expect(Numeral(0).value() is String, isTrue);
-    });
-
+  group('.format()', () {
     test('`< 1k` return double string', () {
-      expect(Numeral(100).value(), equals(100.toString()));
+      expect(Numeral(100).format(), equals(100.toString()));
     });
 
     test('K abbr', () {
-      expect(Numeral(1000).value(), equals('1K'));
+      expect(Numeral(1000).format(), equals('1K'));
     });
 
     test('M abbr', () {
-      expect(Numeral(1000000).value(), equals('1M'));
+      expect(Numeral(1000000).format(), equals('1M'));
     });
 
     test('B abbr', () {
-      expect(Numeral(1000000000).value(), equals('1B'));
+      expect(Numeral(1000000000).format(), equals('1B'));
     });
 
     test('T abbr', () {
-      expect(Numeral(1000000000000).value(), equals('1T'));
+      expect(Numeral(1000000000000).format(), equals('1T'));
     });
 
     test('Negative value', () {
-      expect(Numeral(-1000).value(), equals('-1K'));
+      expect(Numeral(-1000).format(), equals('-1K'));
     });
 
     test('Fraction Digits', () {
-      expect(Numeral(1234).value(), equals('1.234K'));
-      expect(Numeral(1234).value(fractionDigits: 2), equals('1.23K'));
+      expect(Numeral(1234).format(), equals('1.234K'));
+      expect(Numeral(1234).format(fractionDigits: 2), equals('1.23K'));
     });
 
     test('20_000 is formatted', () {
-      expect(Numeral(20000).value(fractionDigits: 0), equals('20K'));
+      expect(Numeral(20000).format(fractionDigits: 0), equals('20K'));
     });
 
     test('200_000 is formatted', () {
-      expect(Numeral(200000).value(fractionDigits: 0), equals('200K'));
+      expect(Numeral(200000).format(fractionDigits: 0), equals('200K'));
     });
 
     test('20_000_000 is formatted', () {
-      expect(Numeral(20000000).value(fractionDigits: 0), equals('20M'));
+      expect(Numeral(20000000).format(fractionDigits: 0), equals('20M'));
     });
   });
 }

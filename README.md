@@ -12,19 +12,19 @@ See [pub.dev Numeral install document](https://pub.dev/packages/numeral/install)
 import 'package:numeral/numeral.dart';
 
 // number < 1 thousand.
-Numeral(520).value(); // > 520
+Numeral(520).format(); // > 520
 
 // number >= 1 thousand.
-Numeral(1314).value(); // > 1.314K
+Numeral(1314).format(); // > 1.314K
 
 // number >= 1 million.
-Numeral(1000000).value(); // > 1M
+Numeral(1000000).format(); // > 1M
 
 // number >= 1 billion.
-Numeral(1000000000).value(); // > 1B
+Numeral(1000000000).format(); // > 1B
 
 // number >= 1 trillion.
-Numeral(1000000000000).value(); // > 1T
+Numeral(1000000000000).format(); // > 1T
 ```
 
 See [Example](example)

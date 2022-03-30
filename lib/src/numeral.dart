@@ -1,29 +1,27 @@
 import 'constants.dart';
 import 'parser.dart';
 
+/// Numeral formatter
+///
+/// This class is used to format numbers into strings.
+///
+/// Example usage:
+/// ```dart
+/// const numeral =  Numeral(1314);
+/// print(numeral.format()); // => "1.314K"
+/// ```
 class Numeral {
-  final num _number;
-
-  Numeral._(this._number);
-
   /// Create [Numeral] class.
   ///
   /// The Factory create a [Numeral] class instance.
   ///
-  /// [number] is num [Type].
+  /// [numeral] is num [Type].
   ///
   /// return [Numeral] instance.
-  factory Numeral(num number) {
-    assert(
-        number is num, 'The data to be processed must be passed in a [num].');
+  const Numeral(this.numeral);
 
-    return Numeral._(number);
-  }
-
-  /// Get a [number] for double value.
-  ///
-  /// Get the [_number] to [double] Type value.
-  double get number => _number.toDouble();
+  /// Original numeral.
+  final num numeral;
 
   /// Format [number] to beautiful [String].
   ///
@@ -33,8 +31,8 @@ class Numeral {
   /// ```
   ///
   /// return a [String] type.
-  String value({int fractionDigits = DEFAULT_FRACTION_DIGITS}) {
-    final NumeralParsedValue parsed = numeralParser(number);
+  String format({int fractionDigits = DEFAULT_FRACTION_DIGITS}) {
+    final NumeralParsedValue parsed = numeralParser(numeral);
 
     return _removeEndsZero(parsed.value.toStringAsFixed(fractionDigits)) +
         parsed.suffix;
@@ -68,5 +66,5 @@ class Numeral {
   ///
   /// return a [String] type.
   @override
-  String toString() => value();
+  String toString() => format();
 }

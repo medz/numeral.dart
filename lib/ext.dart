@@ -11,6 +11,6 @@ extension ExtensionNumeral on num {
   /// 10000.numeral() // 10K
   /// ```
   String numeral({int fractionDigits = DEFAULT_FRACTION_DIGITS}) {
-    return Numeral(this).value(fractionDigits: fractionDigits);
+    return Numeral(this).format(fractionDigits: fractionDigits);
   }
 }
