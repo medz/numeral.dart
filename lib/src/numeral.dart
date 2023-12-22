@@ -1,70 +1,77 @@
-import 'constants.dart';
-import 'parser.dart';
+library numeral;
 
-/// Numeral formatter
-///
-/// This class is used to format numbers into strings.
-///
-/// Example usage:
-/// ```dart
-/// const numeral =  Numeral(1314);
-/// print(numeral.format()); // => "1.314K"
-/// ```
-class Numeral {
-  /// Create [Numeral] class.
-  ///
-  /// The Factory create a [Numeral] class instance.
-  ///
-  /// [numeral] is num [Type].
-  ///
-  /// return [Numeral] instance.
-  const Numeral(this.numeral);
+import 'numeral_unit.dart';
 
-  /// Original numeral.
-  final num numeral;
+extension Numeral<T extends num> on T {
+  /// Global configuration for numeral formatting default [digits].
+  static int digits = 3;
 
-  /// Format [number] to beautiful [String].
+  /// Global configuration for numeral formatting default unit [builder].
+  static String Function(NumeralUnit) builder = (unit) => unit.value;
+
+  /// Parsing [T] to formated [String].
   ///
-  /// E.g:
   /// ```dart
-  /// Numeral(1000).value(); // -> 1K
+  /// 1000.numeral(); // -> 1K
   /// ```
-  ///
-  /// return a [String] type.
-  String format({int fractionDigits = DEFAULT_FRACTION_DIGITS}) {
-    final NumeralParsedValue parsed = numeralParser(numeral);
+  /// If [digits] is not specified, it defaults to 3.
+  String numeral({int? digits = 3, String Function(NumeralUnit)? builder}) {
+    final (value, unit) = toNumeral;
+    final cleaned = value.toStringAsFixed(digits.orDefault).cleaned;
+    final suffix = builder.orDefault(unit);
 
-    return _removeEndsZero(parsed.value.toStringAsFixed(fractionDigits)) +
-        parsed.suffix;
+    return '$cleaned$suffix';
   }
 
-  /// Remove value ends with zero.
+  /// Parsing [T] to formated [String].
   ///
-  /// Remove formated value ends with zero,
-  /// replace to zero string.
+  /// The getter [beautiful] is an alias for [numeral] with default [digits]
+  /// and [builder].
   ///
-  /// [value] type is [String].
-  ///
-  /// return a [String] type.
-  String _removeEndsZero(String value) {
-    if (value.indexOf('.') == -1) {
-      return value;
-    }
+  /// ```dart
+  /// 1000.beautiful; // -> 1K
+  /// ```
+  String get beautiful => numeral();
+}
 
-    if (value.endsWith('.')) {
-      return value.substring(0, value.length - 1);
-    } else if (value.endsWith('0')) {
-      return _removeEndsZero(value.substring(0, value.length - 1));
-    }
-
-    return value;
+extension<T extends num> on T {
+  (num, NumeralUnit) get toNumeral {
+    return switch (abs()) {
+      >= 1000000000000 => (this / 1000000000000, NumeralUnit.trillion),
+      >= 1000000000 => (this / 1000000000, NumeralUnit.billion),
+      >= 1000000 => (this / 1000000, NumeralUnit.million),
+      >= 1000 => (this / 1000, NumeralUnit.thousand),
+      _ => (this, NumeralUnit.less),
+    };
   }
+}
 
-  /// Get formated value.
-  ///
-  /// Get the [value] function value.
-  ///
-  /// return a [String] type.
-  @override
-  String toString() => format();
+extension on String {
+  String get cleaned {
+    return switch (this) {
+      String value when value.endsWith('.') =>
+        value.substring(0, value.length - 1),
+      String value when value.endsWith('0') && contains('.') =>
+        value.substring(0, value.length - 1).cleaned,
+      _ => this,
+    };
+  }
+}
+
+extension on String Function(NumeralUnit)? {
+  String Function(NumeralUnit) get orDefault {
+    return switch (this) {
+      String Function(NumeralUnit) builder => builder,
+      _ => Numeral.builder,
+    };
+  }
+}
+
+extension on int? {
+  int get orDefault {
+    return switch (this) {
+      int value => value,
+      _ => Numeral.digits,
+    };
+  }
 }
