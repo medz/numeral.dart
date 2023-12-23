@@ -4,9 +4,7 @@ description: >-
   Format the number into a beautiful, readable and short string.
 
 version: 3.0.0
-homepage: https://github.com/medz/numeral.dart
 repository: https://github.com/medz/numeral.dart
-issue_tracker: https://github.com/medz/numeral.dart/issues
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
