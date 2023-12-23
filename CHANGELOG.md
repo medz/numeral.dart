@@ -1,18 +1,23 @@
+## 3.0.0
+
+- Refactoring code.
+- Support custom unit builder.
+
 ## [2.0.1]
 
-* Fixed readme extension.
+- Fixed readme extension.
 
 ## [2.0.0]
 
 💥 Refactoring
 
- * `number` -> `numeral`
- * `format()` -> `format()`
- * `factory Numeral()` -> `const Numeral()`
+- `number` -> `numeral`
+- `format()` -> `format()`
+- `factory Numeral()` -> `const Numeral()`
 
 ## [1.2.5]
 
- * Fixed [#7](https://github.com/medz/numeral.dart/issues/7) Formatted value is wrong when fractionDigits is set to 0.
+- Fixed [#7](https://github.com/medz/numeral.dart/issues/7) Formatted value is wrong when fractionDigits is set to 0.
 
 ## [1.2.1]
 
