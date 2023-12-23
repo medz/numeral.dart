@@ -3,11 +3,14 @@ library numeral;
 import 'numeral_unit.dart';
 
 extension Numeral<T extends num> on T {
+  /// Default unit for numeral formatting builder.
+  static String defaultBuilder(NumeralUnit unit) => unit.value;
+
   /// Global configuration for numeral formatting default [digits].
   static int digits = 3;
 
   /// Global configuration for numeral formatting default unit [builder].
-  static String Function(NumeralUnit) builder = (unit) => unit.value;
+  static String Function(NumeralUnit) builder = defaultBuilder;
 
   /// Parsing [T] to formated [String].
   ///
@@ -15,7 +18,7 @@ extension Numeral<T extends num> on T {
   /// 1000.numeral(); // -> 1K
   /// ```
   /// If [digits] is not specified, it defaults to 3.
-  String numeral({int? digits = 3, String Function(NumeralUnit)? builder}) {
+  String numeral({int? digits, String Function(NumeralUnit)? builder}) {
     final (value, unit) = toNumeral;
     final cleaned = value.toStringAsFixed(digits.orDefault).cleaned;
     final suffix = builder.orDefault(unit);
