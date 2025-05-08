@@ -28,9 +28,10 @@ void main() {
 
 ## Configuration
 
-- `digits` (default: `3`): The number of digits to appear after the decimal
+- `Numeral.digits` (default: `3`): The number of digits to show after the decimal
   point.
-- `builder` (default: `NumeralUnit.value`): The function to build the
+- `Numeral.rounded` (default: `false`): Whether the value should be rounded or not.
+- `Numeral.builder` (default: `NumeralUnit.value`): The function to build the
   suffix.
 
 ### Global configuration
@@ -39,6 +40,7 @@ void main() {
 import 'package:numeral/numeral.dart';
 
 Numeral.digits = 2;
+Numeral.rounded = false;
 Numeral.builder = (unit) => '<Your custom suffix>';
 
 ```

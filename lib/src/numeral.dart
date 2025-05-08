@@ -1,5 +1,3 @@
-library numeral;
-
 import 'numeral_unit.dart';
 
 extension Numeral<T extends num> on T {
@@ -9,18 +7,44 @@ extension Numeral<T extends num> on T {
   /// Global configuration for numeral formatting default [digits].
   static int digits = 3;
 
+  /// Global configuration for numeral rounded defaults to false.
+  /// Example:
+  /// ```dart
+  /// Numeral.digits = 1
+  /// Numeral.rounded = true
+  /// 1050.numeral(); // -> 1.1K;
+  /// ```
+  /// ---------------------------
+  /// ```dart
+  /// Numeral.digits = 1
+  /// Numeral.rounded = false
+  /// 1050.numeral(); // -> 1K;
+  /// ```
+  static bool rounded = false;
+
   /// Global configuration for numeral formatting default unit [builder].
   static String Function(NumeralUnit) builder = defaultBuilder;
 
   /// Parsing [T] to formated [String].
   ///
   /// ```dart
-  /// 1000.numeral(); // -> 1K
+  /// 1050.numeral(digits: 1, rounded: true); // -> 1.1K;
+  /// ```
+  /// ---------------------------
+  /// ```dart
+  /// 1050.numeral(digits: 1, rounded: false); // -> 1K;
   /// ```
   /// If [digits] is not specified, it defaults to 3.
-  String numeral({int? digits, String Function(NumeralUnit)? builder}) {
+  /// If [rounded] is not specified, it defaults to false.
+  String numeral(
+      {int? digits, bool? rounded, String Function(NumeralUnit)? builder}) {
     final (value, unit) = toNumeral;
-    final cleaned = value.toStringAsFixed(digits.orDefault).cleaned;
+    rounded ??= Numeral.rounded;
+    digits ??= Numeral.digits;
+    final cleaned = (rounded
+            ? value.toStringAsFixed(digits)
+            : value.toStringAsFixedNotRound(digits))
+        .cleaned;
     final suffix = builder.orDefault(unit);
 
     return '$cleaned$suffix';
@@ -28,8 +52,8 @@ extension Numeral<T extends num> on T {
 
   /// Parsing [T] to formated [String].
   ///
-  /// The getter [beautiful] is an alias for [numeral] with default [digits]
-  /// and [builder].
+  /// The getter [beautiful] is an alias for [numeral] with default [digits],
+  /// [rounded] and [builder].
   ///
   /// ```dart
   /// 1000.beautiful; // -> 1K
@@ -46,6 +70,19 @@ extension<T extends num> on T {
       >= 1000 => (this / 1000, NumeralUnit.thousand),
       _ => (this, NumeralUnit.less),
     };
+  }
+
+  String toStringAsFixedNotRound(int fractionDigits) {
+    String integerPart = toInt().toString();
+    if (fractionDigits == 0) return integerPart;
+    String decimalPart = toString().split('.').lastOrNull ?? '';
+    if (decimalPart.length >= fractionDigits) {
+      decimalPart = decimalPart.substring(0, fractionDigits);
+    } else {
+      decimalPart =
+          decimalPart.padRight(fractionDigits - decimalPart.length, '0');
+    }
+    return '$integerPart.$decimalPart';
   }
 }
 
@@ -66,15 +103,6 @@ extension on String Function(NumeralUnit)? {
     return switch (this) {
       String Function(NumeralUnit) builder => builder,
       _ => Numeral.builder,
-    };
-  }
-}
-
-extension on int? {
-  int get orDefault {
-    return switch (this) {
-      int value => value,
-      _ => Numeral.digits,
     };
   }
 }
