@@ -1,3 +1,7 @@
+## 3.1.0
+
+- **feat**: Added global conf to choose if value should be rounded. [#17](https://github.com/medz/numeral.dart/pull/17) at [@luis901101](https://github.com/luis901101)
+
 ## 3.0.0
 
 - Refactoring code.
