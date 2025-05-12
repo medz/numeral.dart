@@ -73,9 +73,26 @@ extension<T extends num> on T {
   }
 
   String toStringAsFixedNotRound(int fractionDigits) {
-    String integerPart = toInt().toString();
+    int integerValue = toInt();
+    String integerPart = integerValue.toString();
     if (fractionDigits == 0) return integerPart;
-    String decimalPart = toString().split('.').lastOrNull ?? '';
+
+    // Here we are ensuring the integer part to conserve the sign of the number
+    // because in case the number is between -1 and 0, the integer part will be 0
+    // and 0 is not negative, so we need to add the sign to the integer part
+    if (this < 0 && !integerPart.startsWith('-')) {
+      integerPart = '-$integerPart';
+    }
+
+    // Avoid using the following variants to get the decimal part because implies rounding, somehow dart does some floating point rounding for some values:
+    // num decimalValue = this % 1;
+    // num decimalValue = this - integerValue;
+
+    // Instead use string splitting which ensure we get the exact decimal part without rounding
+    final splitParts = toString().split('.');
+    if (splitParts.length == 1) return integerPart;
+
+    String decimalPart = splitParts.lastOrNull ?? '';
     if (decimalPart.length >= fractionDigits) {
       decimalPart = decimalPart.substring(0, fractionDigits);
     } else {
