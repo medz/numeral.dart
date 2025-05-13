@@ -3,7 +3,7 @@ description: >-
   A Dart library for Format number into beautiful string,
   Format the number into a beautiful, readable and short string.
 
-version: 3.1.0
+version: 3.1.1
 repository: https://github.com/medz/numeral.dart
 
 environment:

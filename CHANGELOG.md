@@ -1,3 +1,8 @@
+## 3.1.1
+
+- Fixed the issue that the number after the decimal point was incorrect due to inappropriate rounding.
+- test: Added tests
+
 ## 3.1.0
 
 - **feat**: Added global conf to choose if value should be rounded. [#17](https://github.com/medz/numeral.dart/pull/17) at [@luis901101](https://github.com/luis901101)
