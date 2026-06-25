@@ -2,6 +2,8 @@
 
 - Added a built-in `ja.dart` language path with Japanese compact units,
   cardinal number formatting/parsing, and digit-by-digit year formatting.
+- Added a built-in `ko.dart` language path with Korean compact units,
+  Sino-Korean cardinal numbers, and year numbers.
 - Added a built-in `fr.dart` language path with French compact units,
   cardinal number formatting/parsing, and year numbers.
 - Added a built-in `zh_hant.dart` language path with Traditional Chinese
