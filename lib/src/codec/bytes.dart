@@ -4,6 +4,9 @@ import '../unit.dart';
 import '../unit_matcher.dart';
 import 'decimal.dart';
 
+const _minIntAsDouble = -9223372036854775808.0;
+const _maxIntExclusiveAsDouble = 9223372036854775808.0;
+
 /// Decimal byte units using powers of 1000.
 const decimalByteUnits = NumeralUnitSet([
   NumeralUnit(1, 'B', aliases: ['byte', 'bytes'], space: true),
@@ -130,11 +133,11 @@ final class BytesCodec extends NumeralCodec<int> {
 
   @override
   String format(num value) {
-    if (!value.isFinite || value % 1 != 0) {
+    if (!_isSupportedWholeByteCount(value)) {
       throw ArgumentError.value(
         value,
         'value',
-        'Must be a finite whole byte count.',
+        'Must be a supported finite whole byte count.',
       );
     }
 
@@ -154,9 +157,27 @@ final class BytesCodec extends NumeralCodec<int> {
 
     final match = _unitMatcher.match(trimmed);
     final value = style.parse(match.number) * match.unit.scale;
+    return _parseWholeByteCount(value, input);
+  }
+
+  bool _isSupportedWholeByteCount(num value) {
+    if (!value.isFinite || value % 1 != 0) return false;
+    if (value is! double) return true;
+    return value >= _minIntAsDouble && value < _maxIntExclusiveAsDouble;
+  }
+
+  int _parseWholeByteCount(num value, String input) {
     if (!value.isFinite) {
       throw FormatException(
         'Byte sizes must resolve to a finite whole byte.',
+        input,
+      );
+    }
+
+    if (value is int) return value;
+    if (value < _minIntAsDouble || value >= _maxIntExclusiveAsDouble) {
+      throw FormatException(
+        'Byte sizes must resolve to a supported whole byte.',
         input,
       );
     }

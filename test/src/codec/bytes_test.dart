@@ -27,18 +27,22 @@ void main() {
       final binary = BytesCodec.binary();
 
       expect(decimal.parse('1 KB'), 1000);
+      expect(decimal.parse('1e3 B'), 1000);
       expect(decimal.parse('1.5 MB'), 1500000);
       expect(decimal.parse('1.5 megabytes'), 1500000);
       expect(binary.parse('1.5 KiB'), 1536);
       expect(binary.tryParse('0.1 B'), isNull);
       expect(decimal.tryParse('∞'), isNull);
       expect(decimal.tryParse('NaN B'), isNull);
+      expect(decimal.tryParse('1e20 B'), isNull);
+      expect(decimal.tryParse('9223372036854775808 B'), isNull);
     });
 
     test('rejects non-whole byte counts when formatting', () {
       final codec = BytesCodec();
 
       expect(() => codec.format(1.2), throwsA(isA<ArgumentError>()));
+      expect(() => codec.format(1e20), throwsA(isA<ArgumentError>()));
       expect(
         () => codec.format(double.infinity),
         throwsA(isA<ArgumentError>()),
