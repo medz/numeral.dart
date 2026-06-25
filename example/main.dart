@@ -1,14 +1,14 @@
-import 'package:numeral/numeral.dart' as numeral;
+import 'package:numeral/numeral.dart';
 
 void main() {
-  final decimal = numeral.DecimalFormatter(
+  final decimal = DecimalFormatter(
     minFractionDigits: 2,
     maxFractionDigits: 2,
   );
-  final compact = numeral.CompactFormatter(maxFractionDigits: 1);
-  final percent = numeral.PercentFormatter(maxFractionDigits: 2);
-  final fileSize = numeral.BytesFormatter.binary(maxFractionDigits: 1);
-  final usd = numeral.CurrencyFormatter(r'$');
+  final compact = CompactFormatter(maxFractionDigits: 1);
+  final percent = PercentFormatter(maxFractionDigits: 2);
+  final fileSize = BytesFormatter.binary(maxFractionDigits: 1);
+  final usd = CurrencyFormatter(r'$');
 
   print(decimal.format(1234567.8)); // 1,234,567.80
   print(compact.format(12345)); // 12.3K
