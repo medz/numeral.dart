@@ -104,8 +104,11 @@ void main() {
       expect(codec.tryParse('一〇一'), isNull);
       expect(codec.tryParse('十〇一'), isNull);
       expect(codec.tryParse('百〇十'), isNull);
+      expect(codec.tryParse('百〇一十'), isNull);
       expect(codec.tryParse('千零百'), isNull);
+      expect(codec.tryParse('千零一百'), isNull);
       expect(codec.tryParse('一万〇千'), isNull);
+      expect(codec.tryParse('一万〇一千'), isNull);
       expect(codec.tryParse('一万零'), isNull);
       expect(codec.tryParse('万万'), isNull);
       expect(codec.tryParse('億万'), isNull);

@@ -362,6 +362,7 @@ final class JapaneseCardinalCodec extends NumeralCodec<int> {
     var sawUnit = false;
     var zeroPending = false;
     var unitBeforeZero = 10000;
+    int? zeroUnitBoundary;
 
     for (final char in text.runes.map(String.fromCharCode)) {
       final digit = _digitValues[char];
@@ -376,6 +377,7 @@ final class JapaneseCardinalCodec extends NumeralCodec<int> {
           pendingDigit = null;
           zeroPending = true;
           unitBeforeZero = lastUnit;
+          zeroUnitBoundary = lastUnit;
           sawAny = true;
           continue;
         }
@@ -403,6 +405,9 @@ final class JapaneseCardinalCodec extends NumeralCodec<int> {
       if (zeroPending && unitBeforeZero ~/ 10 == unit) {
         throw FormatException('Unexpected Japanese cardinal token.', input);
       }
+      if (zeroUnitBoundary != null && zeroUnitBoundary ~/ 10 == unit) {
+        throw FormatException('Unexpected Japanese cardinal token.', input);
+      }
 
       final digitForUnit = pendingDigit ?? 1;
       if (digitForUnit == 0) {
@@ -414,6 +419,7 @@ final class JapaneseCardinalCodec extends NumeralCodec<int> {
       sawAny = true;
       sawUnit = true;
       zeroPending = false;
+      zeroUnitBoundary = null;
     }
 
     if (zeroPending) {
