@@ -41,6 +41,17 @@ void main() {
       expect(codec.tryParse('1234,5'), 1234.5);
     });
 
+    test('supports non-grammar separator punctuation', () {
+      final codec = DecimalCodec(
+        groupSeparator: ' ',
+        decimalSeparator: ',',
+        maxFractionDigits: 1,
+      );
+
+      expect(codec.format(1234567.8), '1 234 567,8');
+      expect(codec.parse('1 234 567,8'), 1234567.8);
+    });
+
     test('parses grouped values directly to num', () {
       final codec = DecimalCodec();
 
@@ -75,6 +86,30 @@ void main() {
       );
       expect(
         () => DecimalCodec(groupSeparator: ',', decimalSeparator: ','),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => DecimalCodec(decimalSeparator: 'e'),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => DecimalCodec(decimalSeparator: '1'),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => DecimalCodec(decimalSeparator: '-'),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => DecimalCodec(groupSeparator: 'e'),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => DecimalCodec(groupSeparator: '1'),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => DecimalCodec(groupSeparator: '-'),
         throwsA(isA<ArgumentError>()),
       );
     });

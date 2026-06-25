@@ -16,7 +16,11 @@ final class DecimalCodec extends NumeralCodec<num> {
   }) {
     checkFractionDigits(minFractionDigits, maxFractionDigits);
     checkNotEmpty(decimalSeparator, 'decimalSeparator');
-    if (grouping) checkNotEmpty(groupSeparator, 'groupSeparator');
+    _checkSeparator(decimalSeparator, 'decimalSeparator');
+    if (grouping) {
+      checkNotEmpty(groupSeparator, 'groupSeparator');
+      _checkSeparator(groupSeparator, 'groupSeparator');
+    }
     if (grouping && groupSeparator == decimalSeparator) {
       throw ArgumentError.value(
         groupSeparator,
@@ -50,6 +54,22 @@ final class DecimalCodec extends NumeralCodec<num> {
   static final _validNumberPattern = RegExp(
     r'^[+-]?(?:(?:\d+(?:\.\d*)?)|(?:\.\d+)|Infinity|NaN)(?:[eE][+-]?\d+)?$',
   );
+
+  static void _checkSeparator(String value, String name) {
+    for (final codeUnit in value.codeUnits) {
+      final isDigit = codeUnit >= 48 && codeUnit <= 57;
+      final isUpperAsciiLetter = codeUnit >= 65 && codeUnit <= 90;
+      final isLowerAsciiLetter = codeUnit >= 97 && codeUnit <= 122;
+      final isSign = codeUnit == 43 || codeUnit == 45;
+      if (isDigit || isUpperAsciiLetter || isLowerAsciiLetter || isSign) {
+        throw ArgumentError.value(
+          value,
+          name,
+          'Must not contain ASCII letters, digits, plus signs, or minus signs.',
+        );
+      }
+    }
+  }
 
   @override
   String format(num value) {
