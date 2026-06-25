@@ -400,6 +400,9 @@ final class JapaneseCardinalCodec extends NumeralCodec<int> {
       if (unit >= lastUnit) {
         throw FormatException('Unexpected Japanese cardinal token.', input);
       }
+      if (zeroPending && unitBeforeZero ~/ 10 == unit) {
+        throw FormatException('Unexpected Japanese cardinal token.', input);
+      }
 
       final digitForUnit = pendingDigit ?? 1;
       if (digitForUnit == 0) {
