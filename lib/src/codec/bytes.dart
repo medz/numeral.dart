@@ -1,8 +1,8 @@
-import 'decimal_codec.dart';
-import '_utils.dart';
-import 'numeral_codec.dart';
-import 'rounding.dart';
-import 'unit.dart';
+import '../_utils.dart';
+import '../codec.dart';
+import '../rounding.dart';
+import '../unit.dart';
+import 'decimal.dart';
 
 /// Decimal byte units using powers of 1000.
 const decimalByteUnits = NumeralUnitSet([
@@ -80,19 +80,21 @@ final class BytesCodec extends NumeralCodec<int> {
   BytesCodec({
     this.unitSet = decimalByteUnits,
     this.spaceBeforeUnit,
+    NumeralCodec<num>? style,
     String decimalSeparator = '.',
     int minFractionDigits = 0,
     int maxFractionDigits = 2,
     bool trimTrailingZeros = true,
     Rounding rounding = Rounding.halfUp,
-  }) : _decimal = DecimalCodec(
-          grouping: false,
-          decimalSeparator: decimalSeparator,
-          minFractionDigits: minFractionDigits,
-          maxFractionDigits: maxFractionDigits,
-          trimTrailingZeros: trimTrailingZeros,
-          rounding: rounding,
-        ) {
+  }) : style = style ??
+            DecimalCodec(
+              grouping: false,
+              decimalSeparator: decimalSeparator,
+              minFractionDigits: minFractionDigits,
+              maxFractionDigits: maxFractionDigits,
+              trimTrailingZeros: trimTrailingZeros,
+              rounding: rounding,
+            ) {
     if (unitSet.units.isEmpty) {
       throw ArgumentError.value(unitSet, 'unitSet', 'Must not be empty.');
     }
@@ -101,6 +103,7 @@ final class BytesCodec extends NumeralCodec<int> {
   /// Creates a binary byte codec using powers of 1024.
   BytesCodec.binary({
     bool spaceBeforeUnit = true,
+    NumeralCodec<num>? style,
     String decimalSeparator = '.',
     int minFractionDigits = 0,
     int maxFractionDigits = 2,
@@ -109,6 +112,7 @@ final class BytesCodec extends NumeralCodec<int> {
   }) : this(
           unitSet: binaryByteUnits,
           spaceBeforeUnit: spaceBeforeUnit,
+          style: style,
           decimalSeparator: decimalSeparator,
           minFractionDigits: minFractionDigits,
           maxFractionDigits: maxFractionDigits,
@@ -122,7 +126,8 @@ final class BytesCodec extends NumeralCodec<int> {
   /// Whether a space is inserted before the unit symbol.
   final bool? spaceBeforeUnit;
 
-  final DecimalCodec _decimal;
+  /// Codec used for the numeric part before the byte unit.
+  final NumeralCodec<num> style;
 
   @override
   String format(num value) {
@@ -131,7 +136,7 @@ final class BytesCodec extends NumeralCodec<int> {
 
     final unit = unitSet.units[unitSet.indexFor(value.abs())];
     return unit.format(
-      _decimal.format(value / unit.scale),
+      style.format(value / unit.scale),
       space: spaceBeforeUnit,
     );
   }
@@ -144,7 +149,7 @@ final class BytesCodec extends NumeralCodec<int> {
     }
 
     final match = _matchUnit(trimmed);
-    final value = _decimal.parse(match.number) * match.unit.scale;
+    final value = style.parse(match.number) * match.unit.scale;
     final rounded = value.round();
     if ((value - rounded).abs() > 1e-9) {
       throw FormatException('Byte sizes must resolve to a whole byte.', input);

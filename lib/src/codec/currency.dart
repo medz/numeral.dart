@@ -1,7 +1,7 @@
-import 'decimal_codec.dart';
-import '_utils.dart';
-import 'numeral_codec.dart';
-import 'rounding.dart';
+import '../_utils.dart';
+import '../codec.dart';
+import '../rounding.dart';
+import 'decimal.dart';
 
 /// Converts display-oriented currency values.
 final class CurrencyCodec extends NumeralCodec<num> {
@@ -10,6 +10,7 @@ final class CurrencyCodec extends NumeralCodec<num> {
     this.symbol, {
     this.symbolOnRight = false,
     this.spaceBetweenSymbolAndNumber = false,
+    NumeralCodec<num>? style,
     bool grouping = true,
     String groupSeparator = ',',
     String decimalSeparator = '.',
@@ -17,15 +18,16 @@ final class CurrencyCodec extends NumeralCodec<num> {
     int maxFractionDigits = 2,
     bool trimTrailingZeros = false,
     Rounding rounding = Rounding.halfUp,
-  }) : _decimal = DecimalCodec(
-          grouping: grouping,
-          groupSeparator: groupSeparator,
-          decimalSeparator: decimalSeparator,
-          minFractionDigits: minFractionDigits,
-          maxFractionDigits: maxFractionDigits,
-          trimTrailingZeros: trimTrailingZeros,
-          rounding: rounding,
-        ) {
+  }) : style = style ??
+            DecimalCodec(
+              grouping: grouping,
+              groupSeparator: groupSeparator,
+              decimalSeparator: decimalSeparator,
+              minFractionDigits: minFractionDigits,
+              maxFractionDigits: maxFractionDigits,
+              trimTrailingZeros: trimTrailingZeros,
+              rounding: rounding,
+            ) {
     checkNotEmpty(symbol, 'symbol');
   }
 
@@ -38,7 +40,8 @@ final class CurrencyCodec extends NumeralCodec<num> {
   /// Whether a space is inserted between symbol and number.
   final bool spaceBetweenSymbolAndNumber;
 
-  final DecimalCodec _decimal;
+  /// Codec used for the numeric part inside the currency string.
+  final NumeralCodec<num> style;
 
   @override
   String format(num value) {
@@ -49,10 +52,10 @@ final class CurrencyCodec extends NumeralCodec<num> {
     }
 
     final isNegative = value.isNegative;
-    final number = _decimal.format(value.abs());
+    final numberPart = style.format(value.abs());
     final space = spaceBetweenSymbolAndNumber ? ' ' : '';
     final formatted =
-        symbolOnRight ? '$number$space$symbol' : '$symbol$space$number';
+        symbolOnRight ? '$numberPart$space$symbol' : '$symbol$space$numberPart';
     return isNegative ? '-$formatted' : formatted;
   }
 
@@ -63,17 +66,17 @@ final class CurrencyCodec extends NumeralCodec<num> {
     if (isNegative) {
       trimmed = trimmed.substring(1).trim();
     }
-    late final String number;
+    late final String numberPart;
 
     if (symbolOnRight) {
-      number = stripSuffix(trimmed, symbol, require: true);
+      numberPart = stripSuffix(trimmed, symbol, require: true);
     } else if (trimmed.startsWith(symbol)) {
-      number = trimmed.substring(symbol.length).trim();
+      numberPart = trimmed.substring(symbol.length).trim();
     } else {
       throw FormatException('Expected currency symbol "$symbol".', input);
     }
 
-    final parsed = _decimal.parse(number);
+    final parsed = style.parse(numberPart);
     return isNegative ? -parsed : parsed;
   }
 }

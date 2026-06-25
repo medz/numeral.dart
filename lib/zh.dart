@@ -1,9 +1,9 @@
 /// Simplified Chinese numerals language pack.
 library;
 
-import 'src/compact_codec.dart';
-import 'src/language_pack.dart';
-import 'src/numeral_codec.dart';
+import 'src/codec.dart';
+import 'src/codec/compact.dart';
+import 'src/language.dart';
 import 'src/rounding.dart';
 import 'src/unit.dart';
 
@@ -41,7 +41,7 @@ CompactCodec compact({
 ChineseCardinalCodec cardinal() => zh.cardinal();
 
 /// Simplified Chinese numerals language pack.
-final class ChineseNumerals implements NumeralLanguagePack {
+final class ChineseNumerals implements NumeralLanguage {
   /// Creates a Simplified Chinese numerals language pack.
   const ChineseNumerals();
 

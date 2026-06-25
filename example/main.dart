@@ -11,6 +11,7 @@ void main() {
   final percent = PercentCodec(maxFractionDigits: 2);
   final fileSize = BytesCodec.binary(maxFractionDigits: 1);
   final usd = CurrencyCodec(r'$');
+  final cny = CurrencyCodec('¥', style: zh.compact(maxFractionDigits: 0));
   final zhWords = zh.cardinal();
 
   print(decimal.format(1234567.8)); // 1,234,567.80
@@ -21,5 +22,6 @@ void main() {
   print(fileSize.format(1536)); // 1.5 KiB
   print(fileSize.parse('1.5 KiB')); // 1536
   print(usd.format(1234.5)); // $1,234.50
+  print(cny.format(1000000)); // ¥100万
   print(zhWords.format(1000000)); // 一百万
 }

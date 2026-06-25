@@ -9,6 +9,9 @@
   percentages, byte sizes, and display currency values.
 - Added decimal and binary byte codecs.
 - Added reusable `NumeralUnit` / `NumeralUnitSet` models for unit-based codecs.
+- Added custom number `style` support for unit-style codecs, allowing currency,
+  percentage, byte, and compact formats to compose with language-specific
+  number codecs.
 - Added built-in `en.dart` and `zh.dart` language paths with locale-specific
   compact units, including Simplified Chinese cardinal formatting and parsing.
 - Removed the old `num.numeral()` / `beautiful` extension API.

@@ -96,6 +96,20 @@ void main() {
       expect(zhCompact.parse('3.5万'), 35000);
       expect(codec.tryParse('abc'), isNull);
     });
+
+    test('can use a custom number style', () {
+      final codec = CompactCodec(
+        unitSet: en.englishCompactUnits,
+        style: DecimalCodec(
+          grouping: false,
+          decimalSeparator: ',',
+          maxFractionDigits: 1,
+        ),
+      );
+
+      expect(codec.format(1234), '1,2K');
+      expect(codec.parse('1,2K'), 1200);
+    });
   });
 
   group('percent', () {
@@ -112,6 +126,15 @@ void main() {
       expect(codec.parse('12.5%'), 0.125);
       expect(codec.parse('-50%'), -0.5);
       expect(codec.tryParse('12.5'), isNull);
+    });
+
+    test('can use a custom number style', () {
+      final codec = PercentCodec(
+        style: zh.compact(maxFractionDigits: 0),
+      );
+
+      expect(codec.format(10000), '100万%');
+      expect(codec.parse('100万%'), 10000);
     });
   });
 
@@ -142,6 +165,19 @@ void main() {
       expect(binary.parse('1.5 KiB'), 1536);
       expect(binary.tryParse('0.1 B'), isNull);
     });
+
+    test('can use a custom number style', () {
+      final codec = BytesCodec.binary(
+        style: DecimalCodec(
+          grouping: false,
+          decimalSeparator: ',',
+          maxFractionDigits: 1,
+        ),
+      );
+
+      expect(codec.format(1536), '1,5 KiB');
+      expect(codec.parse('1,5 KiB'), 1536);
+    });
   });
 
   group('currency', () {
@@ -161,6 +197,23 @@ void main() {
       expect(usd.parse(r'-$1,234.50'), -1234.5);
       expect(cny.format(99), '99 元');
       expect(cny.parse('99 元'), 99);
+    });
+
+    test('formats and parses compact currency amounts', () {
+      final cnySymbol = CurrencyCodec(
+        '¥',
+        style: zh.compact(maxFractionDigits: 0),
+      );
+      final cnyUnit = CurrencyCodec(
+        '元',
+        symbolOnRight: true,
+        style: zh.compact(maxFractionDigits: 0),
+      );
+
+      expect(cnySymbol.format(1000000), '¥100万');
+      expect(cnySymbol.parse('¥100万'), 1000000);
+      expect(cnyUnit.format(1000000), '100万元');
+      expect(cnyUnit.parse('100万元'), 1000000);
     });
   });
 

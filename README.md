@@ -60,6 +60,10 @@ bytes.parse('1 KiB'); // 1024
 bytes.decode('1 KiB'); // 1024
 ```
 
+Unit-style codecs such as compact numbers, percentages, byte sizes, and
+currency can replace their internal number style with another codec. By
+default, they use a `DecimalCodec` built from their decimal options.
+
 ### Decimal
 
 ```dart
@@ -127,10 +131,18 @@ Currency formatting is display-oriented. Use a decimal or money type for
 financial calculation, then use Numeral to render and parse strings.
 
 ```dart
+import 'package:numeral/zh.dart' as zh;
+
 final usd = CurrencyCodec(r'$');
+final cny = CurrencyCodec(
+  '¥',
+  style: zh.compact(maxFractionDigits: 0),
+);
 
 usd.format(1234.5); // $1,234.50
 usd.parse(r'$1,234.50'); // 1234.5
+cny.format(1000000); // ¥100万
+cny.parse('¥100万'); // 1000000
 ```
 
 ## Parsing
@@ -170,7 +182,7 @@ words.parse('一百万'); // 1000000
 ```
 
 External packages can build the same style of language path by reusing
-`NumeralLanguagePack`, `NumeralUnitSet`, and `NumeralCodec`.
+`NumeralLanguage`, `NumeralUnitSet`, and `NumeralCodec`.
 
 ## License
 

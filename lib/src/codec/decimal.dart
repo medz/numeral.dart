@@ -1,6 +1,6 @@
-import '_utils.dart';
-import 'numeral_codec.dart';
-import 'rounding.dart';
+import '../_utils.dart';
+import '../codec.dart';
+import '../rounding.dart';
 
 /// Converts ordinary decimal numbers to and from display strings.
 final class DecimalCodec extends NumeralCodec<num> {

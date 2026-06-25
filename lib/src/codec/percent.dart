@@ -1,7 +1,7 @@
-import 'decimal_codec.dart';
-import '_utils.dart';
-import 'numeral_codec.dart';
-import 'rounding.dart';
+import '../_utils.dart';
+import '../codec.dart';
+import '../rounding.dart';
+import 'decimal.dart';
 
 /// Converts ratios to and from percentage strings.
 final class PercentCodec extends NumeralCodec<double> {
@@ -11,19 +11,21 @@ final class PercentCodec extends NumeralCodec<double> {
     this.scale = 100,
     this.spaceBeforeSymbol = false,
     this.requireSymbol = true,
+    NumeralCodec<num>? style,
     String decimalSeparator = '.',
     int minFractionDigits = 0,
     int maxFractionDigits = 2,
     bool trimTrailingZeros = true,
     Rounding rounding = Rounding.halfUp,
-  }) : _decimal = DecimalCodec(
-          grouping: false,
-          decimalSeparator: decimalSeparator,
-          minFractionDigits: minFractionDigits,
-          maxFractionDigits: maxFractionDigits,
-          trimTrailingZeros: trimTrailingZeros,
-          rounding: rounding,
-        ) {
+  }) : style = style ??
+            DecimalCodec(
+              grouping: false,
+              decimalSeparator: decimalSeparator,
+              minFractionDigits: minFractionDigits,
+              maxFractionDigits: maxFractionDigits,
+              trimTrailingZeros: trimTrailingZeros,
+              rounding: rounding,
+            ) {
     if (scale == 0) {
       throw ArgumentError.value(scale, 'scale', 'Must not be zero.');
     }
@@ -42,7 +44,8 @@ final class PercentCodec extends NumeralCodec<double> {
   /// Whether parsing requires [symbol].
   final bool requireSymbol;
 
-  final DecimalCodec _decimal;
+  /// Codec used for the numeric part before the percent symbol.
+  final NumeralCodec<num> style;
 
   @override
   String format(num value) {
@@ -50,12 +53,12 @@ final class PercentCodec extends NumeralCodec<double> {
     if (special != null) return special;
 
     final space = spaceBeforeSymbol ? ' ' : '';
-    return '${_decimal.format(value * scale)}$space$symbol';
+    return '${style.format(value * scale)}$space$symbol';
   }
 
   @override
   double parse(String input) {
     final number = stripSuffix(input, symbol, require: requireSymbol);
-    return _decimal.parse(number) / scale;
+    return style.parse(number) / scale;
   }
 }

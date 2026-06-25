@@ -18,12 +18,12 @@
 /// ```
 library;
 
-export 'src/bytes_codec.dart';
-export 'src/compact_codec.dart';
-export 'src/currency_codec.dart';
-export 'src/decimal_codec.dart';
-export 'src/language_pack.dart';
-export 'src/numeral_codec.dart';
-export 'src/percent_codec.dart';
+export 'src/codec.dart';
+export 'src/codec/bytes.dart';
+export 'src/codec/compact.dart';
+export 'src/codec/currency.dart';
+export 'src/codec/decimal.dart';
+export 'src/codec/percent.dart';
+export 'src/language.dart';
 export 'src/rounding.dart';
 export 'src/unit.dart';

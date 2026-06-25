@@ -1,8 +1,8 @@
 /// English numerals language pack.
 library;
 
-import 'src/compact_codec.dart';
-import 'src/language_pack.dart';
+import 'src/codec/compact.dart';
+import 'src/language.dart';
 import 'src/rounding.dart';
 import 'src/unit.dart';
 
@@ -39,7 +39,7 @@ CompactCodec compact({
 }
 
 /// English numerals language pack.
-final class EnglishNumerals implements NumeralLanguagePack {
+final class EnglishNumerals implements NumeralLanguage {
   /// Creates an English numerals language pack.
   const EnglishNumerals();
 

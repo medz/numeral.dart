@@ -1,9 +1,9 @@
-import 'compact_codec.dart';
+import 'codec/compact.dart';
 import 'rounding.dart';
 import 'unit.dart';
 
 /// A language pack supplies locale-specific unit data and number-word codecs.
-abstract interface class NumeralLanguagePack {
+abstract interface class NumeralLanguage {
   /// BCP 47-style locale identifier.
   String get locale;
 
