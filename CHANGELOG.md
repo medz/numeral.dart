@@ -1,3 +1,8 @@
+## Unreleased
+
+- Added a built-in `es.dart` language path with Spanish compact units and
+  cardinal number formatting/parsing.
+
 ## 4.0.0
 
 - Rebuilt the public API around reusable codec classes such as

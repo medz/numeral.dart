@@ -215,6 +215,22 @@ rmb.format(1000000); // 人民币壹佰万元整
 rmb.format(1234567.89); // 人民币壹佰贰拾叁万肆仟伍佰陆拾柒元捌角玖分
 ```
 
+Spanish is available from its own language path:
+
+```dart
+import 'package:numeral/es.dart' as es;
+
+final compact = es.compact(maxFractionDigits: 2);
+final words = es.cardinal();
+
+compact.format(1500000); // 1,5 M
+compact.parse('2 millones'); // 2000000
+words.format(1000000); // un millón
+words.format(1000000000); // mil millones
+words.format(1000000000000); // un billón
+words.parse('veintiún mil'); // 21000
+```
+
 External packages can build the same style of language path by reusing
 `NumeralLanguage`, `NumeralUnitSet`, and `NumeralCodec`.
 
