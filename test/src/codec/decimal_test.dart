@@ -89,6 +89,14 @@ void main() {
         throwsA(isA<ArgumentError>()),
       );
       expect(
+        () => DecimalCodec(groupSeparator: '..', decimalSeparator: '.'),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => DecimalCodec(groupSeparator: '.', decimalSeparator: '..'),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
         () => DecimalCodec(decimalSeparator: 'e'),
         throwsA(isA<ArgumentError>()),
       );

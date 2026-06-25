@@ -28,6 +28,15 @@ final class DecimalCodec extends NumeralCodec<num> {
         'Must differ from decimalSeparator.',
       );
     }
+    if (grouping &&
+        (groupSeparator.contains(decimalSeparator) ||
+            decimalSeparator.contains(groupSeparator))) {
+      throw ArgumentError.value(
+        groupSeparator,
+        'groupSeparator',
+        'Must not overlap with decimalSeparator.',
+      );
+    }
   }
 
   /// Whether integer digits are grouped.
