@@ -360,38 +360,78 @@ abstract base class _ChineseSectionIntegerCodec extends NumeralCodec<int> {
       }
     }
 
-    if (text == digitSymbols[0]) return 0;
+    if (text.runes.length == 1 &&
+        digitValues[String.fromCharCode(text.runes.single)] == 0) {
+      return 0;
+    }
 
     var total = 0;
     var section = 0;
-    var number = 0;
+    int? number;
+    var lastSmallUnit = 10000;
+    var lastSectionUnit = 1000000000000000000;
     for (final char in text.runes.map(String.fromCharCode)) {
       final digit = digitValues[char];
       if (digit != null) {
+        if (number != null) {
+          if (number == 0 && digit != 0 && (section > 0 || total > 0)) {
+            number = digit;
+            continue;
+          }
+          throw FormatException(unexpectedDescription, input);
+        }
         number = digit;
         continue;
       }
 
       final smallUnit = smallUnitValues[char];
       if (smallUnit != null) {
-        section += (number == 0 ? 1 : number) * smallUnit;
-        number = 0;
+        if (smallUnit >= lastSmallUnit) {
+          throw FormatException(unexpectedDescription, input);
+        }
+
+        final digit = number;
+        if (digit == 0 && (section > 0 || total == 0)) {
+          throw FormatException(unexpectedDescription, input);
+        }
+
+        section += (digit == null || digit == 0 ? 1 : digit) * smallUnit;
+        number = null;
+        lastSmallUnit = smallUnit;
         continue;
       }
 
       final sectionUnit = sectionUnitValues[char];
       if (sectionUnit != null) {
-        section += number;
-        number = 0;
-        total += (section == 0 ? 1 : section) * sectionUnit;
+        if (sectionUnit >= lastSectionUnit) {
+          throw FormatException(unexpectedDescription, input);
+        }
+
+        final digit = number;
+        if (digit == 0) {
+          throw FormatException(unexpectedDescription, input);
+        }
+        section += digit ?? 0;
+        if (section == 0) {
+          throw FormatException(unexpectedDescription, input);
+        }
+
+        total += section * sectionUnit;
         section = 0;
+        number = null;
+        lastSmallUnit = 10000;
+        lastSectionUnit = sectionUnit;
         continue;
       }
 
       throw FormatException(unexpectedDescription, input);
     }
 
-    final value = total + section + number;
+    if (number == 0) {
+      throw FormatException(unexpectedDescription, input);
+    }
+
+    final value = total + section + (number ?? 0);
     return negative ? -value : value;
   }
 
@@ -523,7 +563,10 @@ final class ChineseRmbCodec extends NumeralCodec<num> {
     final yuanIndex = text.indexOf('元');
     if (yuanIndex >= 0) {
       final yuanText = text.substring(0, yuanIndex);
-      yuan = yuanText.isEmpty ? 0 : _financial.parse(yuanText);
+      if (yuanText.isEmpty) {
+        throw FormatException('Expected an RMB amount yuan value.', input);
+      }
+      yuan = _financial.parse(yuanText);
       lower = text.substring(yuanIndex + 1);
     }
 

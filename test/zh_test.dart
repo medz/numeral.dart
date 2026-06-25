@@ -26,12 +26,18 @@ void main() {
       expect(codec.format(11), '十一');
       expect(codec.format(101), '一百零一');
       expect(codec.format(10001), '一万零一');
+      expect(codec.format(10010), '一万零十');
       expect(codec.format(1000000), '一百万');
       expect(codec.format(1234567), '一百二十三万四千五百六十七');
 
       expect(codec.parse('一百万'), 1000000);
+      expect(codec.parse('一万零十'), 10010);
       expect(codec.parse('一百二十三万四千五百六十七'), 1234567);
       expect(codec.tryParse('not a number'), isNull);
+      expect(codec.tryParse('一二'), isNull);
+      expect(codec.tryParse('一百零'), isNull);
+      expect(codec.tryParse('零一'), isNull);
+      expect(codec.tryParse('万'), isNull);
     });
 
     test('formats and parses year numbers digit by digit', () {
@@ -55,12 +61,18 @@ void main() {
       expect(codec.format(10), '壹拾');
       expect(codec.format(101), '壹佰零壹');
       expect(codec.format(10001), '壹万零壹');
+      expect(codec.format(10010), '壹万零壹拾');
       expect(codec.format(1000000), '壹佰万');
       expect(codec.format(1234567), '壹佰贰拾叁万肆仟伍佰陆拾柒');
 
       expect(codec.parse('壹佰万'), 1000000);
+      expect(codec.parse('壹万零壹拾'), 10010);
       expect(codec.parse('壹佰贰拾叁万肆仟伍佰陆拾柒'), 1234567);
       expect(codec.tryParse('一百万'), isNull);
+      expect(codec.tryParse('壹贰'), isNull);
+      expect(codec.tryParse('壹佰零'), isNull);
+      expect(codec.tryParse('零壹'), isNull);
+      expect(codec.tryParse('万'), isNull);
     });
 
     test('formats and parses RMB uppercase amounts', () {
@@ -83,6 +95,7 @@ void main() {
       expect(codec.parse('人民币壹佰元零壹分'), 100.01);
       expect(codec.parse('人民币壹角'), 0.1);
       expect(codec.tryParse('人民币整'), isNull);
+      expect(codec.tryParse('人民币元整'), isNull);
       expect(codec.tryParse('人民币壹佰元零零'), isNull);
     });
 
