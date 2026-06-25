@@ -246,7 +246,10 @@ final class FrenchCardinalCodec extends NumeralCodec<int> {
       } else {
         final plural = count > 1 && scale.value != 1000;
         final unit = plural ? '${scale.name}s' : scale.name;
-        parts.add('${_formatPositive(count)}-$unit');
+        final countText = scale.value == 1000
+            ? _dropTerminalPlural(_formatPositive(count))
+            : _formatPositive(count);
+        parts.add('$countText-$unit');
       }
       rest %= scale.value;
     }
@@ -267,6 +270,12 @@ final class FrenchCardinalCodec extends NumeralCodec<int> {
         : '${_smallWords[hundreds]}-cent${rest == 0 ? 's' : ''}';
     if (rest == 0) return prefix;
     return '$prefix-${_formatBelowHundred(rest)}';
+  }
+
+  String _dropTerminalPlural(String text) {
+    if (text.endsWith('cents')) return text.substring(0, text.length - 1);
+    if (text.endsWith('vingts')) return text.substring(0, text.length - 1);
+    return text;
   }
 
   String _formatBelowHundred(int value) {
