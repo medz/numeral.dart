@@ -124,6 +124,9 @@ final class DecimalCodec extends NumeralCodec<num> {
       normalized = normalized.replaceAll(groupSeparator, '');
     }
     if (decimalSeparator != '.') {
+      if (normalized.replaceAll(decimalSeparator, '').contains('.')) {
+        throw FormatException('Unexpected decimal separator.', input);
+      }
       normalized = normalized.replaceAll(decimalSeparator, '.');
     }
 

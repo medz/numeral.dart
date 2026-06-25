@@ -48,6 +48,13 @@ void main() {
       expect(codec.parse('1.234.567,8'), 1234567.8);
       expect(codec.tryParse('12.34,5'), isNull);
       expect(codec.tryParse('1234,5'), 1234.5);
+
+      final ungrouped = DecimalCodec(
+        grouping: false,
+        decimalSeparator: ',',
+      );
+      expect(ungrouped.parse('1234,5'), 1234.5);
+      expect(ungrouped.tryParse('1234.5'), isNull);
     });
 
     test('supports non-grammar separator punctuation', () {

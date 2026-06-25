@@ -24,6 +24,7 @@ void main() {
 
     test('parses percentages directly to double', () {
       final codec = PercentCodec();
+      final comma = PercentCodec(decimalSeparator: ',');
 
       expect(codec.parse('12.5%'), 0.125);
       expect(codec.parse('-50%'), -0.5);
@@ -31,6 +32,8 @@ void main() {
       expect(codec.parse('-∞%'), double.negativeInfinity);
       expect(codec.parse('NaN%').isNaN, isTrue);
       expect(codec.tryParse('12.5'), isNull);
+      expect(comma.parse('12,5%'), 0.125);
+      expect(comma.tryParse('12.5%'), isNull);
     });
 
     test('supports custom symbols, scale, and optional symbols', () {
