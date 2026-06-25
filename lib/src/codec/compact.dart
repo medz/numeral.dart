@@ -2,6 +2,7 @@ import '../_utils.dart';
 import '../codec.dart';
 import '../rounding.dart';
 import '../unit.dart';
+import '../unit_matcher.dart';
 import 'decimal.dart';
 
 /// Converts compact values such as `1.2K` or `3.4M`.
@@ -16,7 +17,7 @@ final class CompactCodec extends NumeralCodec<num> {
     bool trimTrailingZeros = true,
     Rounding rounding = Rounding.halfUp,
     this.compactOverflow = true,
-  }) : style = style ??
+  })  : style = style ??
             DecimalCodec(
               grouping: false,
               decimalSeparator: decimalSeparator,
@@ -24,11 +25,8 @@ final class CompactCodec extends NumeralCodec<num> {
               maxFractionDigits: maxFractionDigits,
               trimTrailingZeros: trimTrailingZeros,
               rounding: rounding,
-            ) {
-    if (unitSet.units.isEmpty) {
-      throw ArgumentError.value(unitSet, 'unitSet', 'Must not be empty.');
-    }
-  }
+            ),
+        _unitMatcher = NumeralUnitMatcher(unitSet);
 
   /// Unit set used by this codec.
   final NumeralUnitSet unitSet;
@@ -38,6 +36,8 @@ final class CompactCodec extends NumeralCodec<num> {
 
   /// Codec used for the numeric part before the compact unit.
   final NumeralCodec<num> style;
+
+  final NumeralUnitMatcher _unitMatcher;
 
   @override
   String format(num value) {
@@ -60,7 +60,7 @@ final class CompactCodec extends NumeralCodec<num> {
       throw FormatException('Expected a compact number.', input);
     }
 
-    final match = _matchUnit(trimmed);
+    final match = _unitMatcher.match(trimmed);
     final parsedNumber = style.parse(match.number);
     return normalizeNum(parsedNumber * match.unit.scale);
   }
@@ -78,24 +78,5 @@ final class CompactCodec extends NumeralCodec<num> {
       selected += 1;
     }
     return selected;
-  }
-
-  ({String number, NumeralUnit unit}) _matchUnit(String input) {
-    final lowerInput = input.toLowerCase();
-    final candidates = <({NumeralUnit unit, String token})>[
-      for (final unit in unitSet.units)
-        for (final token in unit.tokens) (unit: unit, token: token),
-    ]..sort((a, b) => b.token.length.compareTo(a.token.length));
-
-    for (final candidate in candidates) {
-      final lowerToken = candidate.token.toLowerCase();
-      if (!lowerInput.endsWith(lowerToken)) continue;
-
-      final number = input.substring(0, input.length - candidate.token.length);
-      if (number.trim().isEmpty) continue;
-      return (number: number.trim(), unit: candidate.unit);
-    }
-
-    return (number: input, unit: unitSet.units.first);
   }
 }

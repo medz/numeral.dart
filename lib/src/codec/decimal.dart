@@ -47,6 +47,10 @@ final class DecimalCodec extends NumeralCodec<num> {
   /// Rounding behavior for excess fraction digits.
   final Rounding rounding;
 
+  static final _validNumberPattern = RegExp(
+    r'^[+-]?(?:(?:\d+(?:\.\d*)?)|(?:\.\d+)|Infinity|NaN)(?:[eE][+-]?\d+)?$',
+  );
+
   @override
   String format(num value) {
     final special = formatSpecial(value);
@@ -93,11 +97,7 @@ final class DecimalCodec extends NumeralCodec<num> {
       normalized = normalized.replaceAll(decimalSeparator, '.');
     }
 
-    final valid = RegExp(
-      r'^[+-]?(?:(?:\d+(?:\.\d*)?)|(?:\.\d+)|Infinity|NaN)(?:[eE][+-]?\d+)?$',
-    ).hasMatch(normalized);
-
-    if (!valid) {
+    if (!_validNumberPattern.hasMatch(normalized)) {
       throw FormatException('Expected a number.', input);
     }
 

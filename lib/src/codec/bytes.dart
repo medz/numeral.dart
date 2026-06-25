@@ -2,6 +2,7 @@ import '../_utils.dart';
 import '../codec.dart';
 import '../rounding.dart';
 import '../unit.dart';
+import '../unit_matcher.dart';
 import 'decimal.dart';
 
 /// Decimal byte units using powers of 1000.
@@ -86,7 +87,7 @@ final class BytesCodec extends NumeralCodec<int> {
     int maxFractionDigits = 2,
     bool trimTrailingZeros = true,
     Rounding rounding = Rounding.halfUp,
-  }) : style = style ??
+  })  : style = style ??
             DecimalCodec(
               grouping: false,
               decimalSeparator: decimalSeparator,
@@ -94,11 +95,8 @@ final class BytesCodec extends NumeralCodec<int> {
               maxFractionDigits: maxFractionDigits,
               trimTrailingZeros: trimTrailingZeros,
               rounding: rounding,
-            ) {
-    if (unitSet.units.isEmpty) {
-      throw ArgumentError.value(unitSet, 'unitSet', 'Must not be empty.');
-    }
-  }
+            ),
+        _unitMatcher = NumeralUnitMatcher(unitSet);
 
   /// Creates a binary byte codec using powers of 1024.
   BytesCodec.binary({
@@ -129,6 +127,8 @@ final class BytesCodec extends NumeralCodec<int> {
   /// Codec used for the numeric part before the byte unit.
   final NumeralCodec<num> style;
 
+  final NumeralUnitMatcher _unitMatcher;
+
   @override
   String format(num value) {
     final special = formatSpecial(value);
@@ -148,31 +148,12 @@ final class BytesCodec extends NumeralCodec<int> {
       throw FormatException('Expected a byte size.', input);
     }
 
-    final match = _matchUnit(trimmed);
+    final match = _unitMatcher.match(trimmed);
     final value = style.parse(match.number) * match.unit.scale;
     final rounded = value.round();
     if ((value - rounded).abs() > 1e-9) {
       throw FormatException('Byte sizes must resolve to a whole byte.', input);
     }
     return rounded;
-  }
-
-  ({String number, NumeralUnit unit}) _matchUnit(String input) {
-    final lowerInput = input.toLowerCase();
-    final candidates = <({NumeralUnit unit, String token})>[
-      for (final unit in unitSet.units)
-        for (final token in unit.tokens) (unit: unit, token: token),
-    ]..sort((a, b) => b.token.length.compareTo(a.token.length));
-
-    for (final candidate in candidates) {
-      final lowerToken = candidate.token.toLowerCase();
-      if (!lowerInput.endsWith(lowerToken)) continue;
-
-      final number = input.substring(0, input.length - candidate.token.length);
-      if (number.trim().isEmpty) continue;
-      return (number: number.trim(), unit: candidate.unit);
-    }
-
-    return (number: input, unit: unitSet.units.first);
   }
 }
