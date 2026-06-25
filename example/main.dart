@@ -1,5 +1,5 @@
-import 'package:numeral/numeral.dart';
 import 'package:numeral/en.dart' as en;
+import 'package:numeral/extension.dart';
 import 'package:numeral/zh.dart' as zh;
 
 void main() {
@@ -21,6 +21,7 @@ void main() {
   print(percent.parse('12.34%')); // 0.1234
   print(fileSize.format(1536)); // 1.5 KiB
   print(fileSize.parse('1.5 KiB')); // 1536
+  print(1536.bytes(binary: true, maxFractionDigits: 1)); // 1.5 KiB
   print(usd.format(1234.5)); // $1,234.50
   print(cny.format(1000000)); // ¥100万
   print(zhWords.format(1000000)); // 一百万

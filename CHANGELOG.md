@@ -12,6 +12,8 @@
 - Added custom number `style` support for unit-style codecs, allowing currency,
   percentage, byte, and compact formats to compose with language-specific
   number codecs.
+- Added `extension.dart` for fluent one-off formatting, such as
+  `12345.compact()`, `1536.bytes(binary: true)`, and `123.currency(r'$')`.
 - Added built-in `en.dart` and `zh.dart` language paths with locale-specific
   compact units, including Simplified Chinese cardinal formatting and parsing.
 - Removed the old `num.numeral()` / `beautiful` extension API.

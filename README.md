@@ -44,6 +44,18 @@ ratio.format(0.1234); // 12.34%
 ratio.parse('12.34%'); // 0.1234
 ```
 
+For one-off formatting, import the extension entry:
+
+```dart
+import 'package:numeral/extension.dart';
+import 'package:numeral/zh.dart' as zh;
+
+12345.compact(maxFractionDigits: 1); // 12.3K
+1536.bytes(binary: true, maxFractionDigits: 1); // 1.5 KiB
+1000000.currency('¥', style: zh.compact(maxFractionDigits: 0)); // ¥100万
+1000000.formatWith(zh.cardinal()); // 一百万
+```
+
 ## Codecs
 
 Each codec extends `Codec<T, String>` from `dart:convert`.
