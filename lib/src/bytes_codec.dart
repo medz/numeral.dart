@@ -2,78 +2,84 @@ import 'decimal_codec.dart';
 import '_utils.dart';
 import 'numeral_codec.dart';
 import 'rounding.dart';
+import 'unit.dart';
 
-/// A byte unit such as KB or MiB.
-final class ByteUnit {
-  /// Creates a byte unit.
-  const ByteUnit(
-    this.scale,
-    this.symbol, {
-    this.aliases = const [],
-  });
+/// Decimal byte units using powers of 1000.
+const decimalByteUnits = NumeralUnitSet([
+  NumeralUnit(1, 'B', aliases: ['byte', 'bytes'], space: true),
+  NumeralUnit(
+    1000,
+    'KB',
+    aliases: ['kb', 'kilobyte', 'kilobytes'],
+    space: true,
+  ),
+  NumeralUnit(
+    1000000,
+    'MB',
+    aliases: ['mb', 'megabyte', 'megabytes'],
+    space: true,
+  ),
+  NumeralUnit(
+    1000000000,
+    'GB',
+    aliases: ['gb', 'gigabyte', 'gigabytes'],
+    space: true,
+  ),
+  NumeralUnit(
+    1000000000000,
+    'TB',
+    aliases: ['tb', 'terabyte', 'terabytes'],
+    space: true,
+  ),
+  NumeralUnit(
+    1000000000000000,
+    'PB',
+    aliases: ['pb', 'petabyte', 'petabytes'],
+    space: true,
+  ),
+]);
 
-  /// Number of bytes represented by one unit.
-  final int scale;
-
-  /// Display symbol.
-  final String symbol;
-
-  /// Additional symbols accepted by parsers.
-  final List<String> aliases;
-
-  List<String> get _tokens => [
-        symbol,
-        ...aliases,
-      ];
-}
-
-/// A byte unit set.
-final class ByteUnitSet {
-  /// Creates a byte unit set.
-  const ByteUnitSet(this.units);
-
-  /// Decimal byte units using powers of 1000.
-  static const decimal = ByteUnitSet([
-    ByteUnit(1, 'B', aliases: ['byte', 'bytes']),
-    ByteUnit(1000, 'KB', aliases: ['kb', 'kilobyte', 'kilobytes']),
-    ByteUnit(1000000, 'MB', aliases: ['mb', 'megabyte', 'megabytes']),
-    ByteUnit(1000000000, 'GB', aliases: ['gb', 'gigabyte', 'gigabytes']),
-    ByteUnit(1000000000000, 'TB', aliases: ['tb', 'terabyte', 'terabytes']),
-    ByteUnit(1000000000000000, 'PB', aliases: ['pb', 'petabyte', 'petabytes']),
-  ]);
-
-  /// Binary byte units using powers of 1024.
-  static const binary = ByteUnitSet([
-    ByteUnit(1, 'B', aliases: ['byte', 'bytes']),
-    ByteUnit(1024, 'KiB', aliases: ['kib', 'kibibyte', 'kibibytes']),
-    ByteUnit(1048576, 'MiB', aliases: ['mib', 'mebibyte', 'mebibytes']),
-    ByteUnit(1073741824, 'GiB', aliases: ['gib', 'gibibyte', 'gibibytes']),
-    ByteUnit(1099511627776, 'TiB', aliases: ['tib', 'tebibyte', 'tebibytes']),
-    ByteUnit(
-      1125899906842624,
-      'PiB',
-      aliases: ['pib', 'pebibyte', 'pebibytes'],
-    ),
-  ]);
-
-  /// Units ordered from smallest to largest.
-  final List<ByteUnit> units;
-
-  int indexFor(num magnitude) {
-    var selected = 0;
-    for (var index = 0; index < units.length; index += 1) {
-      if (magnitude >= units[index].scale) selected = index;
-    }
-    return selected;
-  }
-}
+/// Binary byte units using powers of 1024.
+const binaryByteUnits = NumeralUnitSet([
+  NumeralUnit(1, 'B', aliases: ['byte', 'bytes'], space: true),
+  NumeralUnit(
+    1024,
+    'KiB',
+    aliases: ['kib', 'kibibyte', 'kibibytes'],
+    space: true,
+  ),
+  NumeralUnit(
+    1048576,
+    'MiB',
+    aliases: ['mib', 'mebibyte', 'mebibytes'],
+    space: true,
+  ),
+  NumeralUnit(
+    1073741824,
+    'GiB',
+    aliases: ['gib', 'gibibyte', 'gibibytes'],
+    space: true,
+  ),
+  NumeralUnit(
+    1099511627776,
+    'TiB',
+    aliases: ['tib', 'tebibyte', 'tebibytes'],
+    space: true,
+  ),
+  NumeralUnit(
+    1125899906842624,
+    'PiB',
+    aliases: ['pib', 'pebibyte', 'pebibytes'],
+    space: true,
+  ),
+]);
 
 /// Converts byte counts to and from byte size strings.
 final class BytesCodec extends NumeralCodec<int> {
   /// Creates a decimal byte codec using powers of 1000.
   BytesCodec({
-    this.unitSet = ByteUnitSet.decimal,
-    this.spaceBeforeUnit = true,
+    this.unitSet = decimalByteUnits,
+    this.spaceBeforeUnit,
     String decimalSeparator = '.',
     int minFractionDigits = 0,
     int maxFractionDigits = 2,
@@ -101,7 +107,7 @@ final class BytesCodec extends NumeralCodec<int> {
     bool trimTrailingZeros = true,
     Rounding rounding = Rounding.halfUp,
   }) : this(
-          unitSet: ByteUnitSet.binary,
+          unitSet: binaryByteUnits,
           spaceBeforeUnit: spaceBeforeUnit,
           decimalSeparator: decimalSeparator,
           minFractionDigits: minFractionDigits,
@@ -111,10 +117,10 @@ final class BytesCodec extends NumeralCodec<int> {
         );
 
   /// Byte unit set used by this codec.
-  final ByteUnitSet unitSet;
+  final NumeralUnitSet unitSet;
 
   /// Whether a space is inserted before the unit symbol.
-  final bool spaceBeforeUnit;
+  final bool? spaceBeforeUnit;
 
   final DecimalCodec _decimal;
 
@@ -124,8 +130,10 @@ final class BytesCodec extends NumeralCodec<int> {
     if (special != null) return special;
 
     final unit = unitSet.units[unitSet.indexFor(value.abs())];
-    final space = spaceBeforeUnit ? ' ' : '';
-    return '${_decimal.format(value / unit.scale)}$space${unit.symbol}';
+    return unit.format(
+      _decimal.format(value / unit.scale),
+      space: spaceBeforeUnit,
+    );
   }
 
   @override
@@ -144,11 +152,11 @@ final class BytesCodec extends NumeralCodec<int> {
     return rounded;
   }
 
-  ({String number, ByteUnit unit}) _matchUnit(String input) {
+  ({String number, NumeralUnit unit}) _matchUnit(String input) {
     final lowerInput = input.toLowerCase();
-    final candidates = <({ByteUnit unit, String token})>[
+    final candidates = <({NumeralUnit unit, String token})>[
       for (final unit in unitSet.units)
-        for (final token in unit._tokens) (unit: unit, token: token),
+        for (final token in unit.tokens) (unit: unit, token: token),
     ]..sort((a, b) => b.token.length.compareTo(a.token.length));
 
     for (final candidate in candidates) {

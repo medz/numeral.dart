@@ -1,4 +1,6 @@
 import 'package:numeral/numeral.dart';
+import 'package:numeral/en.dart' as en;
+import 'package:numeral/zh.dart' as zh;
 import 'package:test/test.dart';
 
 void main() {
@@ -52,7 +54,10 @@ void main() {
 
   group('compact', () {
     test('formats western compact numbers', () {
-      final codec = CompactCodec(maxFractionDigits: 1);
+      final codec = CompactCodec(
+        unitSet: en.englishCompactUnits,
+        maxFractionDigits: 1,
+      );
 
       expect(codec.format(1234), '1.2K');
       expect(codec.format(1234567), '1.2M');
@@ -60,7 +65,10 @@ void main() {
     });
 
     test('moves rounded overflow to the next unit', () {
-      final codec = CompactCodec(maxFractionDigits: 0);
+      final codec = CompactCodec(
+        unitSet: en.englishCompactUnits,
+        maxFractionDigits: 0,
+      );
 
       expect(codec.format(999999), '1M');
       expect(codec.format(999999999), '1B');
@@ -68,7 +76,7 @@ void main() {
 
     test('supports Chinese compact units', () {
       final codec = CompactCodec(
-        unitSet: CompactUnitSet.chinese,
+        unitSet: zh.chineseCompactUnits,
         maxFractionDigits: 2,
       );
 
@@ -77,15 +85,15 @@ void main() {
     });
 
     test('parses compact suffixes directly to num', () {
-      final codec = CompactCodec();
-      final zh = CompactCodec(
-        unitSet: CompactUnitSet.chinese,
+      final codec = CompactCodec(unitSet: en.englishCompactUnits);
+      final zhCompact = CompactCodec(
+        unitSet: zh.chineseCompactUnits,
       );
 
       expect(codec.parse('1.2K'), 1200);
       expect(codec.parse('3 million'), 3000000);
       expect(codec.parse('-1.5B'), -1500000000);
-      expect(zh.parse('3.5万'), 35000);
+      expect(zhCompact.parse('3.5万'), 35000);
       expect(codec.tryParse('abc'), isNull);
     });
   });
@@ -153,6 +161,29 @@ void main() {
       expect(usd.parse(r'-$1,234.50'), -1234.5);
       expect(cny.format(99), '99 元');
       expect(cny.parse('99 元'), 99);
+    });
+  });
+
+  group('language packs', () {
+    test('provides compact codecs through built-in language paths', () {
+      expect(en.compact(maxFractionDigits: 1).format(12345), '12.3K');
+      expect(zh.compact(maxFractionDigits: 2).format(1234567), '123.46万');
+    });
+
+    test('formats and parses Simplified Chinese cardinal numbers', () {
+      final codec = zh.cardinal();
+
+      expect(codec.format(0), '零');
+      expect(codec.format(10), '十');
+      expect(codec.format(11), '十一');
+      expect(codec.format(101), '一百零一');
+      expect(codec.format(10001), '一万零一');
+      expect(codec.format(1000000), '一百万');
+      expect(codec.format(1234567), '一百二十三万四千五百六十七');
+
+      expect(codec.parse('一百万'), 1000000);
+      expect(codec.parse('一百二十三万四千五百六十七'), 1234567);
+      expect(codec.tryParse('not a number'), isNull);
     });
   });
 }

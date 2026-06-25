@@ -5,9 +5,10 @@
 ///
 /// ```dart
 /// import 'package:numeral/numeral.dart';
+/// import 'package:numeral/en.dart' as en;
 ///
 /// final fileSize = BytesCodec.binary(maxFractionDigits: 1);
-/// final compact = CompactCodec(maxFractionDigits: 1);
+/// final compact = en.compact(maxFractionDigits: 1);
 /// final percent = PercentCodec(maxFractionDigits: 2);
 ///
 /// fileSize.format(1536); // 1.5 KiB
@@ -21,6 +22,8 @@ export 'src/bytes_codec.dart';
 export 'src/compact_codec.dart';
 export 'src/currency_codec.dart';
 export 'src/decimal_codec.dart';
+export 'src/language_pack.dart';
 export 'src/numeral_codec.dart';
 export 'src/percent_codec.dart';
 export 'src/rounding.dart';
+export 'src/unit.dart';

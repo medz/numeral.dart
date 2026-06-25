@@ -22,13 +22,14 @@ Import the package:
 
 ```dart
 import 'package:numeral/numeral.dart';
+import 'package:numeral/en.dart' as en;
 ```
 
 Create reusable codec instances:
 
 ```dart
 final fileSize = BytesCodec.binary(maxFractionDigits: 1);
-final compact = CompactCodec(maxFractionDigits: 1);
+final compact = en.compact(maxFractionDigits: 1);
 final ratio = PercentCodec(maxFractionDigits: 2);
 
 fileSize.format(1536); // 1.5 KiB
@@ -74,20 +75,28 @@ amount.parse('1,234,567.80'); // 1234567.8
 ### Compact
 
 ```dart
-final compact = CompactCodec(maxFractionDigits: 1);
+import 'package:numeral/en.dart' as en;
+
+final compact = en.compact(maxFractionDigits: 1);
 
 compact.format(1234); // 1.2K
 compact.format(999999); // 1M
 compact.parse('3 million'); // 3000000
 ```
 
-Chinese compact units are built in:
+Custom unit sets use the same `NumeralUnit` model as byte codecs:
 
 ```dart
-final zh = CompactCodec(unitSet: CompactUnitSet.chinese);
+final custom = CompactCodec(
+  unitSet: NumeralUnitSet([
+    NumeralUnit(1, ''),
+    NumeralUnit(1000, 'K', aliases: ['k']),
+    NumeralUnit(1000000, 'M', aliases: ['m']),
+  ]),
+);
 
-zh.format(1234567); // 123.46万
-zh.parse('3.5万'); // 35000
+custom.format(1234567); // 1.23M
+custom.parse('3.5M'); // 3500000
 ```
 
 ### Percent
@@ -142,6 +151,26 @@ bytes.tryParse('bad input'); // null
 - `PercentCodec.parse(...)` returns `double`.
 - `BytesCodec.parse(...)` returns `int`.
 - `CurrencyCodec.parse(...)` returns `num`.
+
+## Language Paths
+
+Built-in language packs live behind separate import paths. This keeps the core
+API small while allowing locale-specific rules to include code, not only unit
+data.
+
+```dart
+import 'package:numeral/zh.dart' as zh;
+
+final compact = zh.compact(maxFractionDigits: 2);
+final words = zh.cardinal();
+
+compact.format(1234567); // 123.46万
+words.format(1000000); // 一百万
+words.parse('一百万'); // 1000000
+```
+
+External packages can build the same style of language path by reusing
+`NumeralLanguagePack`, `NumeralUnitSet`, and `NumeralCodec`.
 
 ## License
 

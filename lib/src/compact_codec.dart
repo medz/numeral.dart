@@ -2,71 +2,13 @@ import 'decimal_codec.dart';
 import '_utils.dart';
 import 'numeral_codec.dart';
 import 'rounding.dart';
-
-/// A compact unit such as thousand, million, or billion.
-final class CompactUnit {
-  /// Creates a compact unit.
-  const CompactUnit(
-    this.scale,
-    this.symbol, {
-    this.aliases = const [],
-  });
-
-  /// Numeric scale represented by this unit.
-  final num scale;
-
-  /// Display symbol appended after the formatted number.
-  final String symbol;
-
-  /// Additional symbols accepted by parsers.
-  final List<String> aliases;
-
-  List<String> get _tokens => [
-        if (symbol.isNotEmpty) symbol,
-        ...aliases,
-      ];
-}
-
-/// A set of compact units.
-final class CompactUnitSet {
-  /// Creates a compact unit set.
-  const CompactUnitSet(this.units);
-
-  /// Western short scale units: `K`, `M`, `B`, `T`, `P`.
-  static const westernShort = CompactUnitSet([
-    CompactUnit(1, ''),
-    CompactUnit(1000, 'K', aliases: ['k', 'thousand']),
-    CompactUnit(1000000, 'M', aliases: ['m', 'million']),
-    CompactUnit(1000000000, 'B', aliases: ['b', 'billion']),
-    CompactUnit(1000000000000, 'T', aliases: ['t', 'trillion']),
-    CompactUnit(1000000000000000, 'P', aliases: ['p', 'quadrillion']),
-  ]);
-
-  /// Chinese-style units: `万`, `亿`, `兆`.
-  static const chinese = CompactUnitSet([
-    CompactUnit(1, ''),
-    CompactUnit(10000, '万'),
-    CompactUnit(100000000, '亿'),
-    CompactUnit(1000000000000, '兆'),
-  ]);
-
-  /// Units ordered from smallest to largest.
-  final List<CompactUnit> units;
-
-  int indexFor(num magnitude) {
-    var selected = 0;
-    for (var index = 0; index < units.length; index += 1) {
-      if (magnitude >= units[index].scale) selected = index;
-    }
-    return selected;
-  }
-}
+import 'unit.dart';
 
 /// Converts compact values such as `1.2K` or `3.4M`.
 final class CompactCodec extends NumeralCodec<num> {
   /// Creates a compact number codec.
   CompactCodec({
-    this.unitSet = CompactUnitSet.westernShort,
+    required this.unitSet,
     String decimalSeparator = '.',
     int minFractionDigits = 0,
     int maxFractionDigits = 2,
@@ -87,7 +29,7 @@ final class CompactCodec extends NumeralCodec<num> {
   }
 
   /// Unit set used by this codec.
-  final CompactUnitSet unitSet;
+  final NumeralUnitSet unitSet;
 
   /// Whether rounded values can move to the next larger unit.
   final bool compactOverflow;
@@ -105,7 +47,7 @@ final class CompactCodec extends NumeralCodec<num> {
     }
 
     final unit = unitSet.units[index];
-    return '${_decimal.format(value / unit.scale)}${unit.symbol}';
+    return unit.format(_decimal.format(value / unit.scale));
   }
 
   @override
@@ -133,11 +75,11 @@ final class CompactCodec extends NumeralCodec<num> {
     return selected;
   }
 
-  ({String number, CompactUnit unit}) _matchUnit(String input) {
+  ({String number, NumeralUnit unit}) _matchUnit(String input) {
     final lowerInput = input.toLowerCase();
-    final candidates = <({CompactUnit unit, String token})>[
+    final candidates = <({NumeralUnit unit, String token})>[
       for (final unit in unitSet.units)
-        for (final token in unit._tokens) (unit: unit, token: token),
+        for (final token in unit.tokens) (unit: unit, token: token),
     ]..sort((a, b) => b.token.length.compareTo(a.token.length));
 
     for (final candidate in candidates) {
