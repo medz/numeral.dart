@@ -1,11 +1,11 @@
 # Numeral
 
-Lightweight number formatting and parsing for Dart.
+Composable number formatting and parsing for Dart.
 
-Numeral focuses on the display formats that application code reaches for every
-day: decimals, compact numbers, percentages, byte sizes, and simple currency
-strings. Create a codec once, keep it in your app utilities, and use it for both
-formatting and parsing.
+Numeral turns application numbers into display strings and back again with
+reusable codecs for decimals, compact values, percentages, byte sizes, currency
+text, and locale-aware numerals. Create a codec once, keep it in your app
+utilities, and use the same object for both formatting and parsing.
 
 ## Installation
 
@@ -213,6 +213,41 @@ year.format(2026); // 二〇二六
 financial.format(1000000); // 壹佰万
 rmb.format(1000000); // 人民币壹佰万元整
 rmb.format(1234567.89); // 人民币壹佰贰拾叁万肆仟伍佰陆拾柒元捌角玖分
+```
+
+Traditional Chinese is available from its own language path:
+
+```dart
+import 'package:numeral/zh_hant.dart' as zh_hant;
+
+final compact = zh_hant.compact(maxFractionDigits: 2);
+final words = zh_hant.cardinal();
+final year = zh_hant.year();
+final financial = zh_hant.financial();
+
+compact.format(1234567); // 123.46萬
+compact.parse('2億'); // 200000000
+words.format(1000000); // 一百萬
+words.parse('兩百萬'); // 2000000
+words.parse('一萬零十'); // 10010
+year.format(2026); // 二〇二六
+financial.format(1000000); // 壹佰萬
+```
+
+French is available from its own language path:
+
+```dart
+import 'package:numeral/fr.dart' as fr;
+
+final compact = fr.compact(maxFractionDigits: 1);
+final words = fr.cardinal();
+final year = fr.year();
+
+compact.format(1500000); // 1,5 M
+compact.parse('1,5 M'); // 1500000
+words.format(2026); // deux-mille-vingt-six
+words.parse('soixante-et-onze'); // 71
+year.format(2026); // deux-mille-vingt-six
 ```
 
 Korean is available from its own language path:
