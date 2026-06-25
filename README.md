@@ -193,7 +193,10 @@ final rmb = zh.rmb();
 
 compact.format(1234567); // 123.46万
 words.format(1000000); // 一百万
+words.format(2000000); // 二百万
 words.parse('一百万'); // 1000000
+words.parse('两百万'); // 2000000
+words.parse('一万零十'); // 10010
 year.format(2026); // 二〇二六
 financial.format(1000000); // 壹佰万
 rmb.format(1000000); // 人民币壹佰万元整

@@ -18,27 +18,81 @@ void main() {
       expect(codec.parse('3.5万'), 35000);
     });
 
-    test('formats and parses cardinal numbers', () {
+    test('formats canonical cardinal numbers', () {
       final codec = zh.cardinal();
 
-      expect(codec.format(0), '零');
-      expect(codec.format(10), '十');
-      expect(codec.format(11), '十一');
-      expect(codec.format(101), '一百零一');
-      expect(codec.format(1010), '一千零一十');
-      expect(codec.format(10001), '一万零一');
-      expect(codec.format(10010), '一万零一十');
-      expect(codec.format(10020), '一万零二十');
-      expect(codec.format(1000000), '一百万');
-      expect(codec.format(1234567), '一百二十三万四千五百六十七');
+      final cases = {
+        0: '零',
+        2: '二',
+        10: '十',
+        11: '十一',
+        20: '二十',
+        21: '二十一',
+        101: '一百零一',
+        110: '一百一十',
+        111: '一百一十一',
+        1010: '一千零一十',
+        1020: '一千零二十',
+        1021: '一千零二十一',
+        10001: '一万零一',
+        10010: '一万零一十',
+        10011: '一万零一十一',
+        10020: '一万零二十',
+        10021: '一万零二十一',
+        10100: '一万零一百',
+        10101: '一万零一百零一',
+        11000: '一万一千',
+        12000: '一万二千',
+        2000000: '二百万',
+        20000000: '二千万',
+        200000000: '二亿',
+        220000000: '二亿二千万',
+        1234567: '一百二十三万四千五百六十七',
+        123456789: '一亿二千三百四十五万六千七百八十九',
+        -10021: '负一万零二十一',
+      };
 
-      expect(codec.parse('一百万'), 1000000);
-      expect(codec.parse('一千零一十'), 1010);
-      expect(codec.parse('一千零十'), 1010);
-      expect(codec.parse('一万零一十'), 10010);
-      expect(codec.parse('一万零十'), 10010);
-      expect(codec.parse('一万零二十'), 10020);
-      expect(codec.parse('一百二十三万四千五百六十七'), 1234567);
+      for (final entry in cases.entries) {
+        expect(codec.format(entry.key), entry.value, reason: '${entry.key}');
+      }
+    });
+
+    test('parses cardinal numbers and common variants', () {
+      final codec = zh.cardinal();
+
+      final cases = {
+        '一百万': 1000000,
+        '二百万': 2000000,
+        '两百万': 2000000,
+        '二千万': 20000000,
+        '两千万': 20000000,
+        '二亿': 200000000,
+        '两亿': 200000000,
+        '一千零一十': 1010,
+        '一千零十': 1010,
+        '一千零二十': 1020,
+        '一千零二十一': 1021,
+        '一万零一十': 10010,
+        '一万零十': 10010,
+        '一万零二十': 10020,
+        '一万零二十一': 10021,
+        '一万二千': 12000,
+        '一万两千': 12000,
+        '两万二千': 22000,
+        '二亿两千万': 220000000,
+        '两亿两千万': 220000000,
+        '一百二十三万四千五百六十七': 1234567,
+        '负两百万': -2000000,
+      };
+
+      for (final entry in cases.entries) {
+        expect(codec.parse(entry.key), entry.value, reason: entry.key);
+      }
+    });
+
+    test('rejects malformed cardinal numbers', () {
+      final codec = zh.cardinal();
+
       expect(codec.tryParse('not a number'), isNull);
       expect(codec.tryParse('一二'), isNull);
       expect(codec.tryParse('一百零'), isNull);

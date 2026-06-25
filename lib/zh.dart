@@ -188,6 +188,9 @@ final class ChineseYearCodec extends NumeralCodec<int> {
 }
 
 /// Converts integers to and from Simplified Chinese cardinal numerals.
+///
+/// Formatting emits a normalized form with `二`. Parsing also accepts common
+/// `两` variants and elided `一十` variants such as `一万零十`.
 final class ChineseCardinalCodec extends _ChineseSectionIntegerCodec {
   /// Creates a Simplified Chinese cardinal codec.
   const ChineseCardinalCodec()
