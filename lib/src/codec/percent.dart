@@ -26,8 +26,8 @@ final class PercentCodec extends NumeralCodec<double> {
               trimTrailingZeros: trimTrailingZeros,
               rounding: rounding,
             ) {
-    if (scale == 0) {
-      throw ArgumentError.value(scale, 'scale', 'Must not be zero.');
+    if (!scale.isFinite || scale == 0) {
+      throw ArgumentError.value(scale, 'scale', 'Must be finite and non-zero.');
     }
     checkNotEmpty(symbol, 'symbol');
   }
@@ -49,10 +49,10 @@ final class PercentCodec extends NumeralCodec<double> {
 
   @override
   String format(num value) {
-    final special = formatSpecial(value);
-    if (special != null) return special;
-
     final space = spaceBeforeSymbol ? ' ' : '';
+    final special = formatSpecial(value);
+    if (special != null) return '$special$space$symbol';
+
     return '${style.format(value * scale)}$space$symbol';
   }
 

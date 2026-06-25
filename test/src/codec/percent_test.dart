@@ -10,7 +10,9 @@ void main() {
 
       expect(codec.format(0.1234), '12.3%');
       expect(codec.format(1), '100%');
-      expect(codec.format(double.infinity), '∞');
+      expect(codec.format(double.infinity), '∞%');
+      expect(codec.format(double.negativeInfinity), '-∞%');
+      expect(codec.format(double.nan), 'NaN%');
     });
 
     test('parses percentages directly to double', () {
@@ -18,6 +20,9 @@ void main() {
 
       expect(codec.parse('12.5%'), 0.125);
       expect(codec.parse('-50%'), -0.5);
+      expect(codec.parse('∞%'), double.infinity);
+      expect(codec.parse('-∞%'), double.negativeInfinity);
+      expect(codec.parse('NaN%').isNaN, isTrue);
       expect(codec.tryParse('12.5'), isNull);
     });
 
@@ -30,6 +35,8 @@ void main() {
       expect(basisPoints.parse('123bp'), 0.0123);
       expect(optional.parse('12.5'), 0.125);
       expect(spaced.format(0.5), '50 %');
+      expect(spaced.format(double.infinity), '∞ %');
+      expect(spaced.parse('∞ %'), double.infinity);
     });
 
     test('can use a custom number style', () {
@@ -46,6 +53,14 @@ void main() {
 
     test('rejects invalid options', () {
       expect(() => PercentCodec(scale: 0), throwsA(isA<ArgumentError>()));
+      expect(
+        () => PercentCodec(scale: double.infinity),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => PercentCodec(scale: double.nan),
+        throwsA(isA<ArgumentError>()),
+      );
       expect(() => PercentCodec(symbol: ''), throwsA(isA<ArgumentError>()));
     });
   });
