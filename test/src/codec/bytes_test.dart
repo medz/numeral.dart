@@ -32,6 +32,8 @@ void main() {
       expect(decimal.parse('1.5 megabytes'), 1500000);
       expect(binary.parse('1.5 KiB'), 1536);
       expect(binary.tryParse('0.1 B'), isNull);
+      expect(decimal.tryParse('∞'), isNull);
+      expect(decimal.tryParse('NaN B'), isNull);
     });
 
     test('can use a custom number style', () {

@@ -445,6 +445,7 @@ final class ChineseRmbCodec extends NumeralCodec<num> {
   final bool writeWholeSuffixForJiao;
 
   static const _financial = ChineseFinancialCodec();
+  static final _leadingZeroPattern = RegExp('^零+');
 
   @override
   String format(num value) {
@@ -527,7 +528,7 @@ final class ChineseRmbCodec extends NumeralCodec<num> {
     }
 
     if (lower.contains('角') || lower.contains('分')) {
-      lower = lower.replaceFirst(RegExp('^零+'), '');
+      lower = lower.replaceFirst(_leadingZeroPattern, '');
     } else if (lower.trim().isNotEmpty) {
       throw FormatException('Unexpected RMB amount token.', input);
     }

@@ -150,6 +150,13 @@ final class BytesCodec extends NumeralCodec<int> {
 
     final match = _unitMatcher.match(trimmed);
     final value = style.parse(match.number) * match.unit.scale;
+    if (!value.isFinite) {
+      throw FormatException(
+        'Byte sizes must resolve to a finite whole byte.',
+        input,
+      );
+    }
+
     final rounded = value.round();
     if ((value - rounded).abs() > 1e-9) {
       throw FormatException('Byte sizes must resolve to a whole byte.', input);
