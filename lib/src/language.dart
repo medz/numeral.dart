@@ -1,4 +1,4 @@
-import 'codec/compact.dart';
+import 'codec.dart';
 import 'rounding.dart';
 import 'unit.dart';
 
@@ -11,7 +11,7 @@ abstract interface class NumeralLanguage {
   NumeralUnitSet get compactUnits;
 
   /// Creates a compact number codec using this pack's units.
-  CompactCodec compact({
+  NumeralCodec<num> compact({
     String decimalSeparator = '.',
     int minFractionDigits = 0,
     int maxFractionDigits = 2,

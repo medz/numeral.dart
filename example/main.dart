@@ -1,5 +1,6 @@
+import 'package:numeral/codec.dart';
 import 'package:numeral/en.dart' as en;
-import 'package:numeral/extension.dart';
+import 'package:numeral/extension.dart' show NumeralNumExtension;
 import 'package:numeral/zh.dart' as zh;
 
 void main() {

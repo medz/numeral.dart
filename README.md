@@ -18,12 +18,16 @@ dependencies:
 
 ## Usage
 
-Import the package:
+Import the codec entrypoint for built-in number display codecs:
 
 ```dart
-import 'package:numeral/numeral.dart';
+import 'package:numeral/codec.dart';
 import 'package:numeral/en.dart' as en;
 ```
+
+`package:numeral/numeral.dart` contains the core protocols and shared models:
+`NumeralCodec`, `NumeralLanguage`, `NumeralUnitSet`, `NumeralUnit`, and
+`Rounding`.
 
 Create reusable codec instances:
 
@@ -103,6 +107,9 @@ compact.parse('3 million'); // 3000000
 Custom unit sets use the same `NumeralUnit` model as byte codecs:
 
 ```dart
+import 'package:numeral/codec.dart';
+import 'package:numeral/numeral.dart';
+
 final custom = CompactCodec(
   unitSet: NumeralUnitSet([
     NumeralUnit(1, ''),

@@ -1,3 +1,4 @@
+import 'package:numeral/codec.dart';
 import 'package:numeral/extension.dart';
 import 'package:numeral/zh.dart' as zh;
 import 'package:test/test.dart';

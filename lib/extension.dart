@@ -8,10 +8,9 @@
 /// ```
 library;
 
+import 'codec.dart';
 import 'en.dart' as en;
 import 'numeral.dart';
-
-export 'numeral.dart';
 
 /// Fluent formatting helpers for [num] values.
 extension NumeralNumExtension on num {

@@ -2,18 +2,15 @@ import 'package:numeral/numeral.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('public barrel', () {
-    test('exports core codecs and models', () {
+  group('public core barrel', () {
+    test('exports codec protocol and shared models', () {
+      const codec = _PassThroughCodec();
       final units = NumeralUnitSet([
         NumeralUnit(1, ''),
         NumeralUnit(1000, 'K'),
       ]);
 
-      expect(DecimalCodec(maxFractionDigits: 1).format(1234.5), '1,234.5');
-      expect(CompactCodec(unitSet: units).format(1200), '1.2K');
-      expect(PercentCodec().format(0.12), '12%');
-      expect(BytesCodec.binary().format(1024), '1 KiB');
-      expect(CurrencyCodec(r'$').format(1), r'$1.00');
+      expect(codec.format(1), '1');
       expect(Rounding.truncate.name, 'truncate');
       expect(units.indexFor(1000), 1);
     });
@@ -23,13 +20,15 @@ void main() {
 
       expect(language, isA<NumeralLanguage>());
       expect(language.locale, 'x-test');
-      expect(language.compact().format(1000), '1k');
+      expect(language.compact().format(1000), '1000');
       expect(_PassThroughCodec().encode(1), '1');
     });
   });
 }
 
 final class _PassThroughCodec extends NumeralCodec<num> {
+  const _PassThroughCodec();
+
   @override
   String format(num value) => value.toString();
 
@@ -50,7 +49,7 @@ final class _TestLanguage implements NumeralLanguage {
       ]);
 
   @override
-  CompactCodec compact({
+  NumeralCodec<num> compact({
     String decimalSeparator = '.',
     int minFractionDigits = 0,
     int maxFractionDigits = 2,
@@ -58,14 +57,6 @@ final class _TestLanguage implements NumeralLanguage {
     Rounding rounding = Rounding.halfUp,
     bool compactOverflow = true,
   }) {
-    return CompactCodec(
-      unitSet: compactUnits,
-      decimalSeparator: decimalSeparator,
-      minFractionDigits: minFractionDigits,
-      maxFractionDigits: maxFractionDigits,
-      trimTrailingZeros: trimTrailingZeros,
-      rounding: rounding,
-      compactOverflow: compactOverflow,
-    );
+    return const _PassThroughCodec();
   }
 }
