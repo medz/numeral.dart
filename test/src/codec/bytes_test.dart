@@ -97,5 +97,17 @@ void main() {
         throwsA(isA<ArgumentError>()),
       );
     });
+
+    test('rejects malformed unit sets', () {
+      expect(
+        () => BytesCodec(
+          unitSet: const NumeralUnitSet([
+            NumeralUnit(1, 'B'),
+            NumeralUnit(0, 'KB'),
+          ]),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
   });
 }

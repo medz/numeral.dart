@@ -3,18 +3,11 @@ import 'unit.dart';
 /// Matches numeric display units from formatted strings.
 final class NumeralUnitMatcher {
   /// Creates a matcher for [unitSet].
-  NumeralUnitMatcher(NumeralUnitSet unitSet)
-      : _fallback = _checkUnits(unitSet).first,
-        _tokens = [
-          for (final unit in unitSet.units)
-            for (final token in unit.tokens)
-              if (token.isNotEmpty)
-                (
-                  unit: unit,
-                  token: token,
-                  lowerToken: token.toLowerCase(),
-                ),
-        ]..sort((a, b) => b.token.length.compareTo(a.token.length));
+  NumeralUnitMatcher(NumeralUnitSet unitSet) : this._(_checkUnits(unitSet));
+
+  NumeralUnitMatcher._(List<NumeralUnit> units)
+      : _fallback = units.first,
+        _tokens = _tokensFor(units);
 
   final NumeralUnit _fallback;
   final List<({NumeralUnit unit, String token, String lowerToken})> _tokens;
@@ -55,9 +48,73 @@ final class NumeralUnitMatcher {
   }
 
   static List<NumeralUnit> _checkUnits(NumeralUnitSet unitSet) {
-    if (unitSet.units.isEmpty) {
+    final units = unitSet.units;
+    if (units.isEmpty) {
       throw ArgumentError.value(unitSet, 'unitSet', 'Must not be empty.');
     }
-    return unitSet.units;
+
+    num previousScale = 0;
+    final tokenOwners = <String, NumeralUnit>{};
+    for (final unit in units) {
+      final scale = unit.scale;
+      if (!scale.isFinite || scale <= 0) {
+        throw ArgumentError.value(
+          scale,
+          'unitSet',
+          'Unit scales must be finite and positive.',
+        );
+      }
+      if (scale <= previousScale) {
+        throw ArgumentError.value(
+          unitSet,
+          'unitSet',
+          'Unit scales must be strictly ascending.',
+        );
+      }
+      previousScale = scale;
+
+      for (final token in unit.tokens) {
+        if (token.isEmpty) continue;
+        if (token.trim().isEmpty) {
+          throw ArgumentError.value(
+            token,
+            'unitSet',
+            'Unit tokens must not be blank.',
+          );
+        }
+
+        final lowerToken = token.toLowerCase();
+        final existing = tokenOwners[lowerToken];
+        if (existing != null && !identical(existing, unit)) {
+          throw ArgumentError.value(
+            token,
+            'unitSet',
+            'Unit tokens must be unique case-insensitively.',
+          );
+        }
+        tokenOwners[lowerToken] = unit;
+      }
+    }
+
+    return units;
+  }
+
+  static List<({NumeralUnit unit, String token, String lowerToken})> _tokensFor(
+    List<NumeralUnit> units,
+  ) {
+    final seenTokens = <String>{};
+    final tokens = <({NumeralUnit unit, String token, String lowerToken})>[];
+    for (final unit in units) {
+      for (final token in unit.tokens) {
+        if (token.isEmpty) continue;
+
+        final lowerToken = token.toLowerCase();
+        if (!seenTokens.add(lowerToken)) continue;
+        tokens.add((unit: unit, token: token, lowerToken: lowerToken));
+      }
+    }
+
+    tokens.sort((a, b) => b.token.length.compareTo(a.token.length));
+    return tokens;
   }
 }

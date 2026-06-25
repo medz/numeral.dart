@@ -62,6 +62,10 @@ final class NumeralUnitSet {
 
   /// Finds the largest unit whose scale is less than or equal to [magnitude].
   int indexFor(num magnitude) {
+    if (units.isEmpty) {
+      throw ArgumentError.value(this, 'unitSet', 'Must not be empty.');
+    }
+
     var selected = 0;
     for (var index = 0; index < units.length; index += 1) {
       if (magnitude >= units[index].scale) selected = index;

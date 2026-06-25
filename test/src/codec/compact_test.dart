@@ -89,6 +89,18 @@ void main() {
         throwsA(isA<ArgumentError>()),
       );
     });
+
+    test('rejects malformed unit sets', () {
+      expect(
+        () => CompactCodec(
+          unitSet: const NumeralUnitSet([
+            NumeralUnit(1000, 'K'),
+            NumeralUnit(1, ''),
+          ]),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
   });
 }
 

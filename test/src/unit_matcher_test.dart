@@ -61,5 +61,68 @@ void main() {
         throwsA(isA<ArgumentError>()),
       );
     });
+
+    test('rejects invalid unit scales', () {
+      expect(
+        () => NumeralUnitMatcher(
+          const NumeralUnitSet([
+            NumeralUnit(0, ''),
+          ]),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => NumeralUnitMatcher(
+          const NumeralUnitSet([
+            NumeralUnit(1, ''),
+            NumeralUnit(double.infinity, 'K'),
+          ]),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('rejects non-ascending unit scales', () {
+      expect(
+        () => NumeralUnitMatcher(
+          const NumeralUnitSet([
+            NumeralUnit(1000, 'K'),
+            NumeralUnit(1, ''),
+          ]),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => NumeralUnitMatcher(
+          const NumeralUnitSet([
+            NumeralUnit(1, ''),
+            NumeralUnit(1000, 'K'),
+            NumeralUnit(1000, 'thousand'),
+          ]),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('rejects blank and ambiguous unit tokens', () {
+      expect(
+        () => NumeralUnitMatcher(
+          const NumeralUnitSet([
+            NumeralUnit(1, ''),
+            NumeralUnit(1000, ' '),
+          ]),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => NumeralUnitMatcher(
+          const NumeralUnitSet([
+            NumeralUnit(1, 'B'),
+            NumeralUnit(1000, 'KB', aliases: ['b']),
+          ]),
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
   });
 }

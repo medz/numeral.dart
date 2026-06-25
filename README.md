@@ -115,6 +115,10 @@ custom.format(1234567); // 1.23M
 custom.parse('3.5M'); // 3500000
 ```
 
+Custom unit scales must be finite, positive, and strictly ascending. Parser
+tokens are matched case-insensitively, so symbols and aliases should be unique
+after lowercasing.
+
 ### Percent
 
 ```dart

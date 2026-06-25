@@ -38,5 +38,12 @@ void main() {
       expect(units.indexFor(999999), 1);
       expect(units.indexFor(1000000), 2);
     });
+
+    test('rejects empty unit sets when selecting a unit', () {
+      expect(
+        () => const NumeralUnitSet([]).indexFor(1),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
   });
 }
