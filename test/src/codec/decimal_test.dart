@@ -72,6 +72,20 @@ void main() {
       expect(codec.tryParse('not a number'), isNull);
     });
 
+    test('parses special values without exponent suffixes', () {
+      final codec = DecimalCodec();
+
+      expect(codec.parse('∞'), double.infinity);
+      expect(codec.parse('+∞'), double.infinity);
+      expect(codec.parse('-∞'), double.negativeInfinity);
+      expect(codec.parse('Infinity'), double.infinity);
+      expect(codec.parse('-Infinity'), double.negativeInfinity);
+      expect(codec.parse('NaN').isNaN, isTrue);
+      expect(codec.tryParse('NaNe2'), isNull);
+      expect(codec.tryParse('Infinitye2'), isNull);
+      expect(codec.tryParse('∞e2'), isNull);
+    });
+
     test('rejects malformed grouped values', () {
       final codec = DecimalCodec();
 

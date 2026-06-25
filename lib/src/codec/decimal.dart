@@ -61,7 +61,7 @@ final class DecimalCodec extends NumeralCodec<num> {
   final Rounding rounding;
 
   static final _validNumberPattern = RegExp(
-    r'^[+-]?(?:(?:\d+(?:\.\d*)?)|(?:\.\d+)|Infinity|NaN)(?:[eE][+-]?\d+)?$',
+    r'^[+-]?(?:(?:(?:\d+(?:\.\d*)?)|(?:\.\d+))(?:[eE][+-]?\d+)?|Infinity|NaN)$',
   );
 
   static void _checkSeparator(String value, String name) {
