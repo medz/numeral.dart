@@ -121,7 +121,12 @@ void main() {
     });
 
     test('language object creates localized codecs', () {
-      expect(es.es.compact(maxFractionDigits: 1).format(1500000), '1,5 M');
+      expect(
+        es.es
+            .compact(decimalSeparator: ',', maxFractionDigits: 1)
+            .format(1500000),
+        '1,5 M',
+      );
       expect(es.es.cardinal().format(1000000), 'un millón');
       expect(es.es.cardinal().parse('mil millones'), 1000000000);
     });

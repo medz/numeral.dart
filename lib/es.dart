@@ -82,7 +82,7 @@ final class SpanishNumerals implements NumeralLanguage {
 
   @override
   CompactCodec compact({
-    String decimalSeparator = ',',
+    String decimalSeparator = '.',
     int minFractionDigits = 0,
     int maxFractionDigits = 2,
     bool trimTrailingZeros = true,
