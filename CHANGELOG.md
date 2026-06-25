@@ -1,3 +1,8 @@
+## Unreleased
+
+- Added a built-in `ko.dart` language path with Korean compact units,
+  Sino-Korean cardinal numbers, and year numbers.
+
 ## 4.0.0
 
 - Rebuilt the public API around reusable codec classes such as
