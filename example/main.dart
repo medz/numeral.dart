@@ -1,24 +1,21 @@
-import 'package:numeral/numeral.dart';
+import 'package:numeral/numeral.dart' as numeral;
 
 void main() {
-  print(1.beautiful); // 1
-  print(1000.beautiful); // 1K
-  print(10000.beautiful); // 10K
-  print(100000.beautiful); // 100K
-  print(1000000.beautiful); // 1M
-  print(10000000.beautiful); // 10M
-  print(100000000.beautiful); // 100M
-  print(1000000000.beautiful); // 1B
-  print(10000000000.beautiful); // 10B
-  print(100000000000.beautiful); // 100B
-  print(1000000000000.beautiful); // 1T
-  print(10000000000000.beautiful); // 10T
+  final decimal = numeral.decimal(
+    minFractionDigits: 2,
+    maxFractionDigits: 2,
+  );
+  final compact = numeral.compact(maxFractionDigits: 1);
+  final percent = numeral.percent(maxFractionDigits: 2);
+  final fileSize = numeral.bytes(binary: true, maxFractionDigits: 1);
+  final usd = numeral.currency(r'$');
 
-  Numeral.builder = (unit) => unit == NumeralUnit.less ? 'L' : unit.value;
-  print(1.beautiful); // 1L
-
-  print(12345.numeral(digits: 2)); // 12.35K
-
-  Numeral.digits = 1;
-  print(12345.beautiful); // 12.3K
+  print(decimal.format(1234567.8)); // 1,234,567.80
+  print(compact.format(12345)); // 12.3K
+  print(compact.parse('12.3K')); // 12300
+  print(percent.format(0.1234)); // 12.34%
+  print(percent.parse('12.34%')); // 0.1234
+  print(fileSize.format(1536)); // 1.5 KiB
+  print(fileSize.parse('1.5 KiB')); // 1536
+  print(usd.format(1234.5)); // $1,234.50
 }

@@ -1,3 +1,14 @@
+## 4.0.0
+
+- Rebuilt the public API around top-level formatter factories such as
+  `decimal()`, `compact()`, `percent()`, `bytes()`, and `currency()`.
+- Added reusable immutable formatters with `format`, `parse`, and `tryParse`.
+- Added direct parsing support for decimal numbers, compact suffixes,
+  percentages, byte sizes, and display currency values.
+- Added built-in western and Chinese compact unit sets.
+- Added decimal and binary byte formatters.
+- Removed the old `num.numeral()` / `beautiful` extension API.
+
 ## 3.1.2
 
 - Handle infinite and NaN values in toStringAsFixedNotRound

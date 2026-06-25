@@ -1,49 +1,131 @@
 # Numeral
 
-A Dart library for Format number into beautiful string, Format the number
-into a beautiful, readable and short string.
+Lightweight number formatting and parsing for Dart.
+
+Numeral focuses on the display formats that application code reaches for every
+day: decimals, compact numbers, percentages, byte sizes, and simple currency
+strings. Create a formatter once, keep it in your app utilities, and use it for
+both formatting and parsing.
 
 ## Installation
 
-Add this to your package's pubspec.yaml file:
+Add Numeral to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  numeral: latest
+  numeral: ^4.0.0
 ```
 
 ## Usage
 
-Using it is very simple! Just chain call the `numeral()` method or
-`beautiful` attribute after your number (`num`/`int`/`double`)!
+Import the package with an alias:
 
 ```dart
-import 'package:numeral/numeral.dart';
-
-void main() {
-    print(1000.numeral()); // -> 1K
-    print(1000.beautiful); // -> 1K
-}
+import 'package:numeral/numeral.dart' as numeral;
 ```
 
-## Configuration
-
-- `Numeral.digits` (default: `3`): The number of digits to show after the decimal
-  point.
-- `Numeral.rounded` (default: `false`): Whether the value should be rounded or not.
-- `Numeral.builder` (default: `NumeralUnit.value`): The function to build the
-  suffix.
-
-### Global configuration
+Create reusable formatters:
 
 ```dart
-import 'package:numeral/numeral.dart';
+final fileSize = numeral.bytes(binary: true, maxFractionDigits: 1);
+final compact = numeral.compact(maxFractionDigits: 1);
+final ratio = numeral.percent(maxFractionDigits: 2);
 
-Numeral.digits = 2;
-Numeral.rounded = false;
-Numeral.builder = (unit) => '<Your custom suffix>';
+fileSize.format(1536); // 1.5 KiB
+fileSize.parse('1.5 KiB'); // 1536
 
+compact.format(12345); // 12.3K
+compact.parse('12.3K'); // 12300
+
+ratio.format(0.1234); // 12.34%
+ratio.parse('12.34%'); // 0.1234
 ```
+
+## Formatters
+
+### Decimal
+
+```dart
+final amount = numeral.decimal(
+  minFractionDigits: 2,
+  maxFractionDigits: 2,
+);
+
+amount.format(1234567.8); // 1,234,567.80
+amount.parse('1,234,567.80'); // 1234567.8
+```
+
+### Compact
+
+```dart
+final compact = numeral.compact(maxFractionDigits: 1);
+
+compact.format(1234); // 1.2K
+compact.format(999999); // 1M
+compact.parse('3 million'); // 3000000
+```
+
+Chinese compact units are built in:
+
+```dart
+final zh = numeral.compact(unitSet: numeral.CompactUnitSet.chinese);
+
+zh.format(1234567); // 123.46万
+zh.parse('3.5万'); // 35000
+```
+
+### Percent
+
+```dart
+final percent = numeral.percent(maxFractionDigits: 1);
+
+percent.format(0.1234); // 12.3%
+percent.parse('12.3%'); // 0.123
+```
+
+### Bytes
+
+```dart
+final decimalBytes = numeral.bytes();
+final binaryBytes = numeral.bytes(binary: true, maxFractionDigits: 1);
+
+decimalBytes.format(1500); // 1.5 KB
+decimalBytes.parse('1.5 MB'); // 1500000
+
+binaryBytes.format(1536); // 1.5 KiB
+binaryBytes.parse('1.5 KiB'); // 1536
+```
+
+### Currency
+
+Currency formatting is display-oriented. Use a decimal or money type for
+financial calculation, then use Numeral to render and parse strings.
+
+```dart
+final usd = numeral.currency(r'$');
+
+usd.format(1234.5); // $1,234.50
+usd.parse(r'$1,234.50'); // 1234.5
+```
+
+## Parsing
+
+Every formatter has `parse` and `tryParse`:
+
+```dart
+final bytes = numeral.bytes(binary: true);
+
+bytes.parse('1 KiB'); // 1024
+bytes.tryParse('bad input'); // null
+```
+
+`parse` returns the natural numeric type for the formatter:
+
+- `decimal().parse(...)` returns `num`.
+- `compact().parse(...)` returns `num`.
+- `percent().parse(...)` returns `double`.
+- `bytes().parse(...)` returns `int`.
+- `currency(...).parse(...)` returns `num`.
 
 ## License
 
