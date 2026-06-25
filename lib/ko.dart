@@ -29,6 +29,7 @@ const ko = KoreanNumerals();
 /// Korean compact units: `만`, `억`, `조`.
 const koreanCompactUnits = NumeralUnitSet([
   NumeralUnit(1, ''),
+  NumeralUnit(1000, '천', aliases: ['千']),
   NumeralUnit(10000, '만', aliases: ['萬', '万']),
   NumeralUnit(100000000, '억', aliases: ['億']),
   NumeralUnit(1000000000000, '조', aliases: ['兆']),
@@ -247,8 +248,13 @@ final class KoreanCardinalCodec extends NumeralCodec<int> {
         throw FormatException('Unexpected Korean cardinal token.', input);
       }
 
+      final rawSection = sectionText.toString();
+      if (rawSection.isEmpty && total > 0) {
+        throw FormatException('Unexpected Korean cardinal token.', input);
+      }
+
       final section = _parseSection(
-        sectionText.toString(),
+        rawSection,
         input,
         allowEmptyAsOne: true,
         allowLeadingZero: false,

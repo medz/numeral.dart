@@ -13,10 +13,15 @@ void main() {
     test('formats and parses Korean compact numbers', () {
       final codec = ko.compact(maxFractionDigits: 2);
 
+      expect(codec.format(1000), '1천');
+      expect(codec.format(1100), '1.1천');
       expect(codec.format(12345), '1.23만');
       expect(codec.format(1000000), '100만');
       expect(codec.format(120000000), '1.2억');
       expect(codec.format(1200000000000), '1.2조');
+      expect(codec.parse('1천'), 1000);
+      expect(codec.parse('1.1천'), 1100);
+      expect(codec.parse('1千'), 1000);
       expect(codec.parse('1.5만'), 15000);
       expect(codec.parse('2억'), 200000000);
       expect(codec.parse('3萬'), 30000);
@@ -109,6 +114,8 @@ void main() {
       expect(codec.tryParse('십영일'), isNull);
       expect(codec.tryParse('만영'), isNull);
       expect(codec.tryParse('만만'), isNull);
+      expect(codec.tryParse('억만'), isNull);
+      expect(codec.tryParse('일억만'), isNull);
       expect(codec.tryParse('백백'), isNull);
     });
 
@@ -133,7 +140,10 @@ void main() {
       expect(yearWithSuffix.parse('이천이십육년'), 2026);
       expect(yearWithSuffix.tryParse('이천이십육'), isNull);
       expect(codec.tryParse('마이너스일년'), isNull);
-      expect(() => codec.format(1e20), throwsA(isA<ArgumentError>()));
+      expect(
+        () => codec.format(double.maxFinite),
+        throwsA(isA<ArgumentError>()),
+      );
     });
 
     test('language object creates localized codecs', () {
