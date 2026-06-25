@@ -25,13 +25,19 @@ void main() {
       expect(codec.format(10), '十');
       expect(codec.format(11), '十一');
       expect(codec.format(101), '一百零一');
+      expect(codec.format(1010), '一千零一十');
       expect(codec.format(10001), '一万零一');
-      expect(codec.format(10010), '一万零十');
+      expect(codec.format(10010), '一万零一十');
+      expect(codec.format(10020), '一万零二十');
       expect(codec.format(1000000), '一百万');
       expect(codec.format(1234567), '一百二十三万四千五百六十七');
 
       expect(codec.parse('一百万'), 1000000);
+      expect(codec.parse('一千零一十'), 1010);
+      expect(codec.parse('一千零十'), 1010);
+      expect(codec.parse('一万零一十'), 10010);
       expect(codec.parse('一万零十'), 10010);
+      expect(codec.parse('一万零二十'), 10020);
       expect(codec.parse('一百二十三万四千五百六十七'), 1234567);
       expect(codec.tryParse('not a number'), isNull);
       expect(codec.tryParse('一二'), isNull);

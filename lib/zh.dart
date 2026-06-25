@@ -336,8 +336,11 @@ abstract base class _ChineseSectionIntegerCodec extends NumeralCodec<int> {
         buffer.write(digitSymbols[0]);
       }
 
+      final omitLeadingOne =
+          omitLeadingOneForTen && buffer.isEmpty && section < 20;
+
       buffer
-        ..write(_formatSection(section))
+        ..write(_formatSection(section, omitLeadingOneForTen: omitLeadingOne))
         ..write(sectionUnits[index]);
       zeroPending = false;
     }
@@ -391,7 +394,7 @@ abstract base class _ChineseSectionIntegerCodec extends NumeralCodec<int> {
         }
 
         final digit = number;
-        if (digit == 0 && (section > 0 || total == 0)) {
+        if (digit == 0 && section == 0 && total == 0) {
           throw FormatException(unexpectedDescription, input);
         }
 
@@ -435,7 +438,7 @@ abstract base class _ChineseSectionIntegerCodec extends NumeralCodec<int> {
     return negative ? -value : value;
   }
 
-  String _formatSection(int section) {
+  String _formatSection(int section, {required bool omitLeadingOneForTen}) {
     final buffer = StringBuffer();
     var zeroPending = false;
 
