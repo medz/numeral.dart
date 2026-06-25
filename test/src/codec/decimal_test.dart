@@ -37,14 +37,31 @@ void main() {
 
       expect(codec.format(1234567.8), '1.234.567,8');
       expect(codec.parse('1.234.567,8'), 1234567.8);
+      expect(codec.tryParse('12.34,5'), isNull);
+      expect(codec.tryParse('1234,5'), 1234.5);
     });
 
     test('parses grouped values directly to num', () {
       final codec = DecimalCodec();
 
       expect(codec.parse('1,234.5'), 1234.5);
+      expect(codec.parse('1,234,567.5'), 1234567.5);
+      expect(codec.parse('1234.5'), 1234.5);
+      expect(codec.parse('1,234e2'), 123400);
       expect(codec.parse('-1,234'), -1234);
       expect(codec.tryParse('not a number'), isNull);
+    });
+
+    test('rejects malformed grouped values', () {
+      final codec = DecimalCodec();
+
+      expect(codec.tryParse('12,34'), isNull);
+      expect(codec.tryParse('1,,234'), isNull);
+      expect(codec.tryParse(',123'), isNull);
+      expect(codec.tryParse('123,'), isNull);
+      expect(codec.tryParse('1,2345'), isNull);
+      expect(codec.tryParse('1,234.5,6'), isNull);
+      expect(codec.tryParse('1e1,000'), isNull);
     });
 
     test('rejects invalid options', () {

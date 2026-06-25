@@ -46,6 +46,14 @@ void main() {
       expect(cnyUnit.parse('100万元'), 1000000);
     });
 
+    test('rejects malformed grouped currency amounts', () {
+      final usd = CurrencyCodec(r'$');
+
+      expect(usd.tryParse(r'$12,34.00'), isNull);
+      expect(usd.tryParse(r'$1,,234.00'), isNull);
+      expect(usd.tryParse(r'$1,234.00'), 1234);
+    });
+
     test('formats special values with the currency symbol', () {
       final usd = CurrencyCodec(r'$');
 
