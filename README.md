@@ -267,6 +267,24 @@ words.parse('일억 이천만'); // 120000000
 year.format(2026); // 이천이십육
 ```
 
+Japanese is available from its own language path:
+
+```dart
+import 'package:numeral/ja.dart' as ja;
+
+final compact = ja.compact(maxFractionDigits: 2);
+final words = ja.cardinal();
+final year = ja.year();
+
+compact.format(1234567); // 123.46万
+compact.parse('2億'); // 200000000
+words.format(1000000); // 百万
+words.format(10000001); // 一千万一
+words.parse('一万〇一'); // 10001
+words.parse('千五百万'); // 15000000
+year.format(2026); // 二〇二六
+```
+
 Spanish is available from its own language path:
 
 ```dart
