@@ -29,7 +29,7 @@ final class PercentCodec extends NumeralCodec<double> {
     if (!scale.isFinite || scale <= 0) {
       throw ArgumentError.value(scale, 'scale', 'Must be finite and positive.');
     }
-    checkNotEmpty(symbol, 'symbol');
+    checkNotBlank(symbol, 'symbol');
   }
 
   /// Symbol appended after the formatted number.

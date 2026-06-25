@@ -93,6 +93,7 @@ void main() {
       final usd = CurrencyCodec(r'$');
 
       expect(() => CurrencyCodec(''), throwsA(isA<ArgumentError>()));
+      expect(() => CurrencyCodec(' '), throwsA(isA<ArgumentError>()));
       expect(() => usd.parse('1.00'), throwsA(isA<FormatException>()));
     });
   });

@@ -49,6 +49,7 @@ void main() {
       expect(() => checkFractionDigits(0, 21), throwsA(isA<ArgumentError>()));
       expect(() => checkFractionDigits(2, 1), throwsA(isA<ArgumentError>()));
       expect(() => checkNotEmpty('', 'value'), throwsA(isA<ArgumentError>()));
+      expect(() => checkNotBlank(' ', 'value'), throwsA(isA<ArgumentError>()));
     });
   });
 }

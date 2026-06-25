@@ -28,7 +28,7 @@ final class CurrencyCodec extends NumeralCodec<num> {
               trimTrailingZeros: trimTrailingZeros,
               rounding: rounding,
             ) {
-    checkNotEmpty(symbol, 'symbol');
+    checkNotBlank(symbol, 'symbol');
   }
 
   /// Currency symbol.

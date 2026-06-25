@@ -77,6 +77,7 @@ void main() {
         throwsA(isA<ArgumentError>()),
       );
       expect(() => PercentCodec(symbol: ''), throwsA(isA<ArgumentError>()));
+      expect(() => PercentCodec(symbol: ' '), throwsA(isA<ArgumentError>()));
     });
   });
 }

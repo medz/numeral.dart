@@ -103,3 +103,9 @@ void checkNotEmpty(String value, String name) {
     throw ArgumentError.value(value, name, 'Must not be empty.');
   }
 }
+
+void checkNotBlank(String value, String name) {
+  if (value.trim().isEmpty) {
+    throw ArgumentError.value(value, name, 'Must not be blank.');
+  }
+}
