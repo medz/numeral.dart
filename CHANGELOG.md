@@ -1,3 +1,29 @@
+## Unreleased
+
+- Added a built-in `zh_hant.dart` language path with Traditional Chinese
+  compact units, cardinal numbers, year numbers, and financial numerals.
+
+## 4.0.0
+
+- Rebuilt the public API around reusable codec classes such as
+  `DecimalCodec`, `CompactCodec`, `PercentCodec`,
+  `BytesCodec`, and `CurrencyCodec`.
+- Added reusable immutable codecs with standard `encode`/`decode` support and
+  readable `format`, `parse`, and `tryParse` aliases.
+- Added direct parsing support for decimal numbers, compact suffixes,
+  percentages, byte sizes, and display currency values.
+- Added decimal and binary byte codecs.
+- Added reusable `NumeralUnit` / `NumeralUnitSet` models for unit-based codecs.
+- Added custom number `style` support for unit-style codecs, allowing currency,
+  percentage, byte, and compact formats to compose with language-specific
+  number codecs.
+- Added `extension.dart` for fluent one-off formatting, such as
+  `12345.compact()`, `1536.bytes(binary: true)`, and `123.currency(r'$')`.
+- Added built-in `en.dart` and `zh.dart` language paths with locale-specific
+  compact units, including Simplified Chinese cardinal, year, financial
+  numeral, and RMB uppercase amount formatting and parsing.
+- Removed the old `num.numeral()` / `beautiful` extension API.
+
 ## 3.1.2
 
 - Handle infinite and NaN values in toStringAsFixedNotRound
