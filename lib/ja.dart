@@ -309,7 +309,7 @@ final class JapaneseCardinalCodec extends NumeralCodec<int> {
         rawSection,
         input,
         allowEmptyAsOne: true,
-        allowLeadingZero: false,
+        allowLeadingZero: total > 0,
       );
       if (section == 0) {
         throw FormatException('Unexpected Japanese cardinal token.', input);

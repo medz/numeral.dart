@@ -82,7 +82,9 @@ void main() {
         '千五百万': 15000000,
         '一千五百万': 15000000,
         '一億二千万': 120000000,
+        '一億〇一万': 100010000,
         '二億二千万': 220000000,
+        '一兆零二億': 1000200000000,
         '一万二千三百四': 12304,
         '一万二千三百四十': 12340,
         '壱万弐千参百四十五': 12345,
@@ -102,6 +104,7 @@ void main() {
       expect(codec.tryParse('一二'), isNull);
       expect(codec.tryParse('零一'), isNull);
       expect(codec.tryParse('一〇一'), isNull);
+      expect(codec.tryParse('〇一万'), isNull);
       expect(codec.tryParse('十〇一'), isNull);
       expect(codec.tryParse('百〇十'), isNull);
       expect(codec.tryParse('百〇一十'), isNull);
