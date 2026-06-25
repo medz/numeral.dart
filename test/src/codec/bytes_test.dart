@@ -61,6 +61,26 @@ void main() {
       expect(codec.parse('4 words'), 8);
     });
 
+    test('round-trips custom prefix byte units', () {
+      final codec = BytesCodec(
+        unitSet: const NumeralUnitSet([
+          NumeralUnit(1, 'B', space: true),
+          NumeralUnit(
+            1000,
+            'k',
+            aliases: ['kilo'],
+            position: UnitPosition.prefix,
+            space: true,
+          ),
+        ]),
+        maxFractionDigits: 1,
+      );
+
+      expect(codec.format(1500), 'k 1.5');
+      expect(codec.parse('k 1.5'), 1500);
+      expect(codec.parse('kilo 1.5'), 1500);
+    });
+
     test('rejects empty unit sets', () {
       expect(
         () => BytesCodec(unitSet: const NumeralUnitSet([])),

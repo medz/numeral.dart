@@ -20,6 +20,27 @@ void main() {
       expect(matcher.match('1 KILOBYTE').unit.scale, 1000);
     });
 
+    test('matches prefix units by position', () {
+      final matcher = NumeralUnitMatcher(
+        const NumeralUnitSet([
+          NumeralUnit(1, ''),
+          NumeralUnit(
+            100,
+            'x',
+            aliases: ['times'],
+            position: UnitPosition.prefix,
+            space: true,
+          ),
+        ]),
+      );
+
+      final match = matcher.match('x 1.5');
+
+      expect(match.number, '1.5');
+      expect(match.unit.scale, 100);
+      expect(matcher.match('TIMES 2').number, '2');
+    });
+
     test('falls back to the first unit when no suffix matches', () {
       final matcher = NumeralUnitMatcher(
         const NumeralUnitSet([

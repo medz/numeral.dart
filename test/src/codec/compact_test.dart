@@ -58,6 +58,17 @@ void main() {
       expect(codec.tryParse('abc'), isNull);
     });
 
+    test('round-trips prefix compact units', () {
+      final codec = CompactCodec(
+        unitSet: _prefixUnits,
+        maxFractionDigits: 1,
+      );
+
+      expect(codec.format(1500), 'k 1.5');
+      expect(codec.parse('k 1.5'), 1500);
+      expect(codec.parse('kilo 1.5'), 1500);
+    });
+
     test('can use a custom number style', () {
       final codec = CompactCodec(
         unitSet: _westernUnits,
@@ -92,4 +103,15 @@ const _chineseUnits = NumeralUnitSet([
   NumeralUnit(1, ''),
   NumeralUnit(10000, '万'),
   NumeralUnit(100000000, '亿'),
+]);
+
+const _prefixUnits = NumeralUnitSet([
+  NumeralUnit(1, ''),
+  NumeralUnit(
+    1000,
+    'k',
+    aliases: ['kilo'],
+    position: UnitPosition.prefix,
+    space: true,
+  ),
 ]);
