@@ -250,6 +250,23 @@ words.parse('soixante-et-onze'); // 71
 year.format(2026); // deux-mille-vingt-six
 ```
 
+Korean is available from its own language path:
+
+```dart
+import 'package:numeral/ko.dart' as ko;
+
+final compact = ko.compact(maxFractionDigits: 2);
+final words = ko.cardinal();
+final year = ko.year();
+
+compact.format(12345); // 1.23만
+compact.parse('2억'); // 200000000
+words.format(1000000); // 백만
+words.format(123456789); // 일억이천삼백사십오만육천칠백팔십구
+words.parse('일억 이천만'); // 120000000
+year.format(2026); // 이천이십육
+```
+
 External packages can build the same style of language path by reusing
 `NumeralLanguage`, `NumeralUnitSet`, and `NumeralCodec`.
 
