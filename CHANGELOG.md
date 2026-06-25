@@ -2,6 +2,10 @@
 
 - Added a built-in `ja.dart` language path with Japanese compact units,
   cardinal number formatting/parsing, and digit-by-digit year formatting.
+- Added a built-in `fr.dart` language path with French compact units,
+  cardinal number formatting/parsing, and year numbers.
+- Added a built-in `zh_hant.dart` language path with Traditional Chinese
+  compact units, cardinal numbers, year numbers, and financial numerals.
 
 ## 4.0.0
 
