@@ -26,8 +26,8 @@ final class PercentCodec extends NumeralCodec<double> {
               trimTrailingZeros: trimTrailingZeros,
               rounding: rounding,
             ) {
-    if (!scale.isFinite || scale == 0) {
-      throw ArgumentError.value(scale, 'scale', 'Must be finite and non-zero.');
+    if (!scale.isFinite || scale <= 0) {
+      throw ArgumentError.value(scale, 'scale', 'Must be finite and positive.');
     }
     checkNotEmpty(symbol, 'symbol');
   }

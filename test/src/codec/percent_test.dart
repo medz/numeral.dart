@@ -60,6 +60,7 @@ void main() {
 
     test('rejects invalid options', () {
       expect(() => PercentCodec(scale: 0), throwsA(isA<ArgumentError>()));
+      expect(() => PercentCodec(scale: -100), throwsA(isA<ArgumentError>()));
       expect(
         () => PercentCodec(scale: double.infinity),
         throwsA(isA<ArgumentError>()),
