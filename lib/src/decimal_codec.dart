@@ -1,4 +1,4 @@
-import 'internal.dart';
+import '_utils.dart';
 import 'numeral_codec.dart';
 import 'rounding.dart';
 
