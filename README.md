@@ -234,6 +234,22 @@ year.format(2026); // 二〇二六
 financial.format(1000000); // 壹佰萬
 ```
 
+French is available from its own language path:
+
+```dart
+import 'package:numeral/fr.dart' as fr;
+
+final compact = fr.compact(maxFractionDigits: 1);
+final words = fr.cardinal();
+final year = fr.year();
+
+compact.format(1500000); // 1,5 M
+compact.parse('1,5 M'); // 1500000
+words.format(2026); // deux-mille-vingt-six
+words.parse('soixante-et-onze'); // 71
+year.format(2026); // deux-mille-vingt-six
+```
+
 External packages can build the same style of language path by reusing
 `NumeralLanguage`, `NumeralUnitSet`, and `NumeralCodec`.
 
