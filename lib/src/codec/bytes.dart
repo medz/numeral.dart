@@ -1,4 +1,3 @@
-import '../_utils.dart';
 import '../codec.dart';
 import '../rounding.dart';
 import '../unit.dart';
@@ -131,8 +130,13 @@ final class BytesCodec extends NumeralCodec<int> {
 
   @override
   String format(num value) {
-    final special = formatSpecial(value);
-    if (special != null) return special;
+    if (!value.isFinite || value % 1 != 0) {
+      throw ArgumentError.value(
+        value,
+        'value',
+        'Must be a finite whole byte count.',
+      );
+    }
 
     final unit = unitSet.units[unitSet.indexFor(value.abs())];
     return unit.format(

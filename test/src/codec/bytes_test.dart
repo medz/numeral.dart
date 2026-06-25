@@ -12,7 +12,6 @@ void main() {
       expect(codec.format(1000), '1 KB');
       expect(codec.format(1500), '1.5 KB');
       expect(codec.format(2500000), '2.5 MB');
-      expect(codec.format(double.infinity), '∞');
     });
 
     test('formats binary byte sizes', () {
@@ -34,6 +33,17 @@ void main() {
       expect(binary.tryParse('0.1 B'), isNull);
       expect(decimal.tryParse('∞'), isNull);
       expect(decimal.tryParse('NaN B'), isNull);
+    });
+
+    test('rejects non-whole byte counts when formatting', () {
+      final codec = BytesCodec();
+
+      expect(() => codec.format(1.2), throwsA(isA<ArgumentError>()));
+      expect(
+        () => codec.format(double.infinity),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(() => codec.format(double.nan), throwsA(isA<ArgumentError>()));
     });
 
     test('can use a custom number style', () {
