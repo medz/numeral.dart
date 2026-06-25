@@ -1,11 +1,9 @@
+import '../_utils.dart';
 import '../codec.dart';
 import '../rounding.dart';
 import '../unit.dart';
 import '../unit_matcher.dart';
 import 'decimal.dart';
-
-const _minIntAsDouble = -9223372036854775808.0;
-const _maxIntExclusiveAsDouble = 9223372036854775808.0;
 
 /// Decimal byte units using powers of 1000.
 const decimalByteUnits = NumeralUnitSet([
@@ -163,7 +161,7 @@ final class BytesCodec extends NumeralCodec<int> {
   bool _isSupportedWholeByteCount(num value) {
     if (!value.isFinite || value % 1 != 0) return false;
     if (value is! double) return true;
-    return value >= _minIntAsDouble && value < _maxIntExclusiveAsDouble;
+    return isSupportedIntRange(value);
   }
 
   int _parseWholeByteCount(num value, String input) {
@@ -175,7 +173,7 @@ final class BytesCodec extends NumeralCodec<int> {
     }
 
     if (value is int) return value;
-    if (value < _minIntAsDouble || value >= _maxIntExclusiveAsDouble) {
+    if (!isSupportedIntRange(value)) {
       throw FormatException(
         'Byte sizes must resolve to a supported whole byte.',
         input,

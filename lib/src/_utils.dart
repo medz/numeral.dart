@@ -2,6 +2,9 @@ import 'dart:math' as math;
 
 import 'rounding.dart';
 
+const minSupportedIntAsDouble = -9223372036854775808.0;
+const maxSupportedIntExclusiveAsDouble = 9223372036854775808.0;
+
 String fixedDecimal(num value, int fractionDigits, Rounding rounding) {
   String formatted;
   if (rounding == Rounding.halfUp) {
@@ -51,9 +54,16 @@ String? formatSpecial(num value) {
 
 num normalizeNum(num value) {
   if (!value.isFinite) return value;
+  if (!isSupportedIntRange(value)) return value;
   final integer = value.round();
   if ((value - integer).abs() <= 1e-9) return integer;
   return value;
+}
+
+bool isSupportedIntRange(num value) {
+  if (value is! double) return true;
+  return value >= minSupportedIntAsDouble &&
+      value < maxSupportedIntExclusiveAsDouble;
 }
 
 String stripSuffix(String input, String suffix, {required bool require}) {

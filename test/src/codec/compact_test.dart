@@ -52,6 +52,7 @@ void main() {
       final zhCompact = CompactCodec(unitSet: _chineseUnits);
 
       expect(codec.parse('1.2K'), 1200);
+      expect(codec.parse('9223372036854775808K'), isA<double>());
       expect(codec.parse('3 million'), 3000000);
       expect(codec.parse('-1.5B'), -1500000000);
       expect(zhCompact.parse('3.5万'), 35000);

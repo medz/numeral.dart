@@ -32,6 +32,7 @@ void main() {
       expect(normalizeNum(1.0000000005), 1);
       expect(normalizeNum(1.25), 1.25);
       expect(normalizeNum(double.infinity), double.infinity);
+      expect(normalizeNum(9223372036854775808.0), isA<double>());
     });
 
     test('stripSuffix trims the suffix or validates it', () {
