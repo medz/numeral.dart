@@ -13,6 +13,7 @@ void main() {
   final usd = CurrencyCodec(r'$');
   final cny = CurrencyCodec('¥', style: zh.compact(maxFractionDigits: 0));
   final zhWords = zh.cardinal();
+  final zhYear = zh.year();
   final zhRmb = zh.rmb();
 
   print(decimal.format(1234567.8)); // 1,234,567.80
@@ -26,5 +27,6 @@ void main() {
   print(usd.format(1234.5)); // $1,234.50
   print(cny.format(1000000)); // ¥100万
   print(zhWords.format(1000000)); // 一百万
+  print(zhYear.format(2026)); // 二〇二六
   print(zhRmb.format(1000000)); // 人民币壹佰万元整
 }

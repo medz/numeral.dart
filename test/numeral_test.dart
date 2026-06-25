@@ -239,6 +239,20 @@ void main() {
       expect(codec.tryParse('not a number'), isNull);
     });
 
+    test('formats and parses Simplified Chinese year numbers', () {
+      final codec = zh.year();
+      final yearWithSuffix = zh.year(suffix: '年');
+
+      expect(codec.format(2025), '二〇二五');
+      expect(codec.format(2026), '二〇二六');
+      expect(yearWithSuffix.format(2026), '二〇二六年');
+      expect(codec.parse('二〇二六'), 2026);
+      expect(codec.parse('二零二六年'), 2026);
+      expect(yearWithSuffix.parse('二〇二六年'), 2026);
+      expect(yearWithSuffix.tryParse('二〇二六'), isNull);
+      expect(codec.tryParse('二千零二十六'), isNull);
+    });
+
     test('formats and parses Simplified Chinese financial numerals', () {
       final codec = zh.financial();
 

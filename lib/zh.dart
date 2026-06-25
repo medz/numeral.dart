@@ -40,6 +40,9 @@ CompactCodec compact({
 /// Creates a Simplified Chinese cardinal number codec.
 ChineseCardinalCodec cardinal() => zh.cardinal();
 
+/// Creates a Simplified Chinese year number codec.
+ChineseYearCodec year({String suffix = ''}) => zh.year(suffix: suffix);
+
 /// Creates a Simplified Chinese financial numeral codec.
 ChineseFinancialCodec financial() => zh.financial();
 
@@ -90,6 +93,11 @@ final class ChineseNumerals implements NumeralLanguage {
   /// Creates a Simplified Chinese cardinal number codec.
   ChineseCardinalCodec cardinal() => const ChineseCardinalCodec();
 
+  /// Creates a Simplified Chinese year number codec.
+  ChineseYearCodec year({String suffix = ''}) => ChineseYearCodec(
+        suffix: suffix,
+      );
+
   /// Creates a Simplified Chinese financial numeral codec.
   ChineseFinancialCodec financial() => const ChineseFinancialCodec();
 
@@ -104,6 +112,78 @@ final class ChineseNumerals implements NumeralLanguage {
       wholeSuffix: wholeSuffix,
       writeWholeSuffixForJiao: writeWholeSuffixForJiao,
     );
+  }
+}
+
+/// Converts years to and from Simplified Chinese digit-by-digit numerals.
+final class ChineseYearCodec extends NumeralCodec<int> {
+  /// Creates a Simplified Chinese year number codec.
+  const ChineseYearCodec({this.suffix = ''});
+
+  /// Text appended after the formatted year, such as `年`.
+  final String suffix;
+
+  static const _digits = ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+  static const _digitValues = {
+    '〇': 0,
+    '零': 0,
+    '一': 1,
+    '二': 2,
+    '两': 2,
+    '三': 3,
+    '四': 4,
+    '五': 5,
+    '六': 6,
+    '七': 7,
+    '八': 8,
+    '九': 9,
+  };
+
+  @override
+  String format(num value) {
+    if (!value.isFinite || value % 1 != 0 || value < 0) {
+      throw ArgumentError.value(
+        value,
+        'value',
+        'Must be a non-negative finite integer.',
+      );
+    }
+
+    final text = value.toInt().toString();
+    final buffer = StringBuffer();
+    for (final codeUnit in text.codeUnits) {
+      buffer.write(_digits[codeUnit - 48]);
+    }
+    buffer.write(suffix);
+    return buffer.toString();
+  }
+
+  @override
+  int parse(String input) {
+    var text = input.trim();
+    if (suffix.isNotEmpty) {
+      if (!text.endsWith(suffix)) {
+        throw FormatException('Expected year suffix "$suffix".', input);
+      }
+      text = text.substring(0, text.length - suffix.length);
+    } else if (text.endsWith('年')) {
+      text = text.substring(0, text.length - 1);
+    }
+
+    if (text.isEmpty) {
+      throw FormatException('Expected a Chinese year number.', input);
+    }
+
+    final buffer = StringBuffer();
+    for (final char in text.runes.map(String.fromCharCode)) {
+      final value = _digitValues[char];
+      if (value == null) {
+        throw FormatException('Unexpected Chinese year token.', input);
+      }
+      buffer.write(value);
+    }
+
+    return int.parse(buffer.toString());
   }
 }
 
