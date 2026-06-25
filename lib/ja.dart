@@ -300,8 +300,13 @@ final class JapaneseCardinalCodec extends NumeralCodec<int> {
         throw FormatException('Unexpected Japanese cardinal token.', input);
       }
 
+      final rawSection = sectionText.toString();
+      if (rawSection.isEmpty && total > 0) {
+        throw FormatException('Unexpected Japanese cardinal token.', input);
+      }
+
       final section = _parseSection(
-        sectionText.toString(),
+        rawSection,
         input,
         allowEmptyAsOne: true,
         allowLeadingZero: false,

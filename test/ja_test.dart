@@ -105,6 +105,8 @@ void main() {
       expect(codec.tryParse('十〇一'), isNull);
       expect(codec.tryParse('一万零'), isNull);
       expect(codec.tryParse('万万'), isNull);
+      expect(codec.tryParse('億万'), isNull);
+      expect(codec.tryParse('一億万'), isNull);
       expect(codec.tryParse('一百百'), isNull);
     });
 
@@ -129,7 +131,10 @@ void main() {
       expect(yearWithSuffix.parse('二〇二六年'), 2026);
       expect(yearWithSuffix.tryParse('二〇二六'), isNull);
       expect(codec.tryParse('二千二十六'), isNull);
-      expect(() => codec.format(1e20), throwsA(isA<ArgumentError>()));
+      expect(
+        () => codec.format(double.maxFinite),
+        throwsA(isA<ArgumentError>()),
+      );
     });
 
     test('language object creates localized codecs', () {
