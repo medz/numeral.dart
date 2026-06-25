@@ -9,6 +9,8 @@ void main() {
       expect(fixedDecimal(1.239, 2, Rounding.truncate), '1.23');
       expect(fixedDecimal(-1.239, 2, Rounding.truncate), '-1.23');
       expect(fixedDecimal(1.9, 0, Rounding.truncate), '1');
+      expect(fixedDecimal(-0.001, 2, Rounding.halfUp), '0.00');
+      expect(fixedDecimal(-0.001, 0, Rounding.halfUp), '0');
     });
 
     test('normalizeFraction trims trailing zeros down to the minimum', () {

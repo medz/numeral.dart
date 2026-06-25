@@ -17,6 +17,15 @@ void main() {
       expect(codec.format(double.nan), 'NaN');
     });
 
+    test('does not emit negative zero after rounding', () {
+      expect(DecimalCodec(maxFractionDigits: 0).format(-0.1), '0');
+      expect(DecimalCodec(maxFractionDigits: 2).format(-0.001), '0');
+      expect(
+        DecimalCodec(minFractionDigits: 2, maxFractionDigits: 2).format(-0.001),
+        '0.00',
+      );
+    });
+
     test('can truncate instead of rounding', () {
       final codec = DecimalCodec(
         maxFractionDigits: 2,

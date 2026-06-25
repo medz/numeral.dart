@@ -3,18 +3,29 @@ import 'dart:math' as math;
 import 'rounding.dart';
 
 String fixedDecimal(num value, int fractionDigits, Rounding rounding) {
+  String formatted;
   if (rounding == Rounding.halfUp) {
-    return value.toStringAsFixed(fractionDigits);
+    formatted = value.toStringAsFixed(fractionDigits);
+  } else if (fractionDigits == 0) {
+    formatted = value.truncate().toString();
+  } else {
+    final factor = math.pow(10, fractionDigits);
+    final scaled = value * factor;
+    final truncated = value.isNegative ? scaled.ceil() : scaled.floor();
+    formatted = (truncated / factor).toStringAsFixed(fractionDigits);
   }
 
-  if (fractionDigits == 0) {
-    return value.truncate().toString();
-  }
+  return stripNegativeZero(formatted);
+}
 
-  final factor = math.pow(10, fractionDigits);
-  final scaled = value * factor;
-  final truncated = value.isNegative ? scaled.ceil() : scaled.floor();
-  return (truncated / factor).toStringAsFixed(fractionDigits);
+String stripNegativeZero(String value) {
+  if (!value.startsWith('-')) return value;
+
+  for (var index = 1; index < value.length; index += 1) {
+    final codeUnit = value.codeUnitAt(index);
+    if (codeUnit != 46 && codeUnit != 48) return value;
+  }
+  return value.substring(1);
 }
 
 String normalizeFraction(

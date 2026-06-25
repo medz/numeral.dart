@@ -23,6 +23,21 @@ void main() {
       expect(cny.parse('99 元'), 99);
     });
 
+    test('does not emit negative zero after rounding', () {
+      final usd = CurrencyCodec(r'$');
+      final cny = CurrencyCodec(
+        '元',
+        symbolOnRight: true,
+        spaceBetweenSymbolAndNumber: true,
+        maxFractionDigits: 0,
+        minFractionDigits: 0,
+      );
+
+      expect(usd.format(-0.001), r'$0.00');
+      expect(cny.format(-0.1), '0 元');
+      expect(usd.format(-0.005), r'-$0.01');
+    });
+
     test('formats and parses compact currency amounts', () {
       final cnySymbol = CurrencyCodec(
         '¥',
@@ -58,7 +73,7 @@ void main() {
       final usd = CurrencyCodec(r'$');
 
       expect(usd.format(double.infinity), r'$∞');
-      expect(usd.format(double.negativeInfinity), r'$-∞');
+      expect(usd.format(double.negativeInfinity), r'-$∞');
     });
 
     test('rejects invalid symbols and missing parse symbols', () {

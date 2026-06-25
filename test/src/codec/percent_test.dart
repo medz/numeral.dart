@@ -15,6 +15,13 @@ void main() {
       expect(codec.format(double.nan), 'NaN%');
     });
 
+    test('does not emit negative zero after rounding', () {
+      final codec = PercentCodec(maxFractionDigits: 0);
+
+      expect(codec.format(-0.001), '0%');
+      expect(codec.parse('0%'), 0);
+    });
+
     test('parses percentages directly to double', () {
       final codec = PercentCodec();
 

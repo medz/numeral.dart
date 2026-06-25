@@ -46,17 +46,19 @@ final class CurrencyCodec extends NumeralCodec<num> {
   @override
   String format(num value) {
     final special = formatSpecial(value);
-    if (special != null) {
-      final space = spaceBetweenSymbolAndNumber ? ' ' : '';
-      return symbolOnRight ? '$special$space$symbol' : '$symbol$space$special';
+    final numberPart = special ?? style.format(value);
+    return _formatNumberPart(numberPart);
+  }
+
+  String _formatNumberPart(String numberPart) {
+    final space = spaceBetweenSymbolAndNumber ? ' ' : '';
+    if (!symbolOnRight && numberPart.startsWith('-')) {
+      return '-$symbol$space${numberPart.substring(1)}';
     }
 
-    final isNegative = value.isNegative;
-    final numberPart = style.format(value.abs());
-    final space = spaceBetweenSymbolAndNumber ? ' ' : '';
     final formatted =
         symbolOnRight ? '$numberPart$space$symbol' : '$symbol$space$numberPart';
-    return isNegative ? '-$formatted' : formatted;
+    return formatted;
   }
 
   @override
