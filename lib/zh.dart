@@ -7,6 +7,22 @@ import 'src/language.dart';
 import 'src/rounding.dart';
 import 'src/unit.dart';
 
+int _checkedInteger(num value, String message) {
+  if (!value.isFinite || value % 1 != 0) {
+    throw ArgumentError.value(value, 'value', message);
+  }
+
+  final integer = value.toInt();
+  if (value is double && integer.toDouble() != value) {
+    throw ArgumentError.value(
+      value,
+      'value',
+      'Must be exactly representable as an integer.',
+    );
+  }
+  return integer;
+}
+
 /// Simplified Chinese numerals language pack.
 const zh = ChineseNumerals();
 
@@ -141,7 +157,11 @@ final class ChineseYearCodec extends NumeralCodec<int> {
 
   @override
   String format(num value) {
-    if (!value.isFinite || value % 1 != 0 || value < 0) {
+    final integer = _checkedInteger(
+      value,
+      'Must be a non-negative finite integer.',
+    );
+    if (integer < 0) {
       throw ArgumentError.value(
         value,
         'value',
@@ -149,7 +169,7 @@ final class ChineseYearCodec extends NumeralCodec<int> {
       );
     }
 
-    final text = value.toInt().toString();
+    final text = integer.toString();
     final buffer = StringBuffer();
     for (final codeUnit in text.codeUnits) {
       buffer.write(_digits[codeUnit - 48]);
@@ -321,11 +341,7 @@ abstract base class _ChineseSectionIntegerCodec extends NumeralCodec<int> {
 
   @override
   String format(num value) {
-    if (!value.isFinite || value % 1 != 0) {
-      throw ArgumentError.value(value, 'value', 'Must be a finite integer.');
-    }
-
-    final integer = value.toInt();
+    final integer = _checkedInteger(value, 'Must be a finite integer.');
     if (integer == 0) return digitSymbols[0];
     if (integer < 0) return '负${format(-integer)}';
 
@@ -334,6 +350,13 @@ abstract base class _ChineseSectionIntegerCodec extends NumeralCodec<int> {
     while (rest > 0) {
       sections.add(rest % 10000);
       rest ~/= 10000;
+    }
+    if (sections.length > sectionUnits.length) {
+      throw ArgumentError.value(
+        value,
+        'value',
+        'Exceeds supported Chinese section units.',
+      );
     }
 
     final buffer = StringBuffer();
@@ -677,6 +700,7 @@ final class ChineseRmbCodec extends NumeralCodec<num> {
 
     if (text.contains('e') || text.contains('E')) {
       final scaled = value * 100;
+      if (!scaled.isFinite) throw _unsupportedAmountRange(value);
       final cents = scaled.round();
       if ((scaled - cents).abs() <= 1e-7) return cents;
       throw ArgumentError.value(
@@ -687,7 +711,7 @@ final class ChineseRmbCodec extends NumeralCodec<num> {
     }
 
     final parts = text.split('.');
-    final whole = int.parse(parts.first);
+    final whole = _parseAmountInteger(parts.first, value);
     var fraction = parts.length == 1 ? '' : parts.last;
     while (fraction.endsWith('0')) {
       fraction = fraction.substring(0, fraction.length - 1);
@@ -703,6 +727,22 @@ final class ChineseRmbCodec extends NumeralCodec<num> {
 
     final cents = whole * 100 + int.parse(fraction.padRight(2, '0'));
     return negative ? -cents : cents;
+  }
+
+  int _parseAmountInteger(String text, num value) {
+    try {
+      return int.parse(text);
+    } on FormatException {
+      throw _unsupportedAmountRange(value);
+    }
+  }
+
+  ArgumentError _unsupportedAmountRange(num value) {
+    return ArgumentError.value(
+      value,
+      'value',
+      'Exceeds supported RMB amount range.',
+    );
   }
 
   int _parseSingleDigit(String text, String input) {

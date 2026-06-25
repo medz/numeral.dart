@@ -47,6 +47,7 @@ void main() {
         20000000: '二千万',
         200000000: '二亿',
         220000000: '二亿二千万',
+        10000000000000000: '一京',
         1234567: '一百二十三万四千五百六十七',
         123456789: '一亿二千三百四十五万六千七百八十九',
         -10021: '负一万零二十一',
@@ -112,6 +113,15 @@ void main() {
       expect(codec.tryParse('万'), isNull);
     });
 
+    test('rejects cardinal values beyond supported section units', () {
+      final codec = zh.cardinal();
+
+      expect(
+        () => codec.format(1e20),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
     test('formats and parses year numbers digit by digit', () {
       final codec = zh.year();
       final yearWithSuffix = zh.year(suffix: '年');
@@ -124,6 +134,7 @@ void main() {
       expect(yearWithSuffix.parse('二〇二六年'), 2026);
       expect(yearWithSuffix.tryParse('二〇二六'), isNull);
       expect(codec.tryParse('二千零二十六'), isNull);
+      expect(() => codec.format(1e20), throwsA(isA<ArgumentError>()));
     });
 
     test('formats and parses financial numerals', () {
@@ -136,6 +147,7 @@ void main() {
       expect(codec.format(10010), '壹万零壹拾');
       expect(codec.format(100000), '壹拾万');
       expect(codec.format(1000000), '壹佰万');
+      expect(codec.format(10000000000000000), '壹京');
       expect(codec.format(1234567), '壹佰贰拾叁万肆仟伍佰陆拾柒');
 
       expect(codec.parse('壹拾万'), 100000);
@@ -157,6 +169,19 @@ void main() {
       expect(codec.tryParse('壹佰零'), isNull);
       expect(codec.tryParse('零壹'), isNull);
       expect(codec.tryParse('万'), isNull);
+    });
+
+    test('rejects financial values beyond supported section units', () {
+      final codec = zh.financial();
+
+      expect(
+        () => codec.format(1e20),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => zh.rmb().format(1e20),
+        throwsA(isA<ArgumentError>()),
+      );
     });
 
     test('formats and parses RMB uppercase amounts', () {
