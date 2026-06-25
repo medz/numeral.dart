@@ -106,6 +106,9 @@ void main() {
       expect(codec.tryParse('uno dos'), isNull);
       expect(codec.tryParse('un millones'), isNull);
       expect(codec.tryParse('dos millón'), isNull);
+      expect(codec.tryParse('millón'), isNull);
+      expect(codec.tryParse('billón'), isNull);
+      expect(codec.tryParse('menos millón'), isNull);
       expect(codec.tryParse('millones millones'), isNull);
       expect(codec.tryParse('cero uno'), isNull);
       expect(codec.tryParse('mil cero'), isNull);

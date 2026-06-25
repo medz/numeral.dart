@@ -404,7 +404,10 @@ final class SpanishCardinalCodec extends NumeralCodec<int> {
     String input, {
     required bool singular,
   }) {
-    final count = tokens.isEmpty ? 1 : _parseBelowMillion(tokens, input);
+    if (tokens.isEmpty) {
+      throw FormatException('Unexpected Spanish cardinal token.', input);
+    }
+    final count = _parseBelowMillion(tokens, input);
     if (count == 0) {
       throw FormatException('Unexpected Spanish cardinal token.', input);
     }
