@@ -1,11 +1,11 @@
 # Numeral
 
-Lightweight number formatting and parsing for Dart.
+Composable number formatting and parsing for Dart.
 
-Numeral focuses on the display formats that application code reaches for every
-day: decimals, compact numbers, percentages, byte sizes, and simple currency
-strings. Create a codec once, keep it in your app utilities, and use it for both
-formatting and parsing.
+Numeral turns application numbers into display strings and back again with
+reusable codecs for decimals, compact values, percentages, byte sizes, currency
+text, and locale-aware numerals. Create a codec once, keep it in your app
+utilities, and use the same object for both formatting and parsing.
 
 ## Installation
 

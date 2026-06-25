@@ -1,7 +1,7 @@
 name: numeral
 description: >-
-  Lightweight number formatting and parsing for decimals, compact numbers,
-  percentages, byte sizes, and currency display strings.
+  Composable number formatting and parsing for decimals, compact values,
+  percentages, byte sizes, currency display text, and locale-aware numerals.
 
 version: 4.0.0
 repository: https://github.com/medz/numeral.dart
