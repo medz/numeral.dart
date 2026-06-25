@@ -13,7 +13,7 @@ Add Numeral to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  numeral: ^4.0.0
+  numeral: ^4.1.0
 ```
 
 ## Usage

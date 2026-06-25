@@ -3,7 +3,7 @@ description: >-
   Composable number formatting and parsing for decimals, compact values,
   percentages, byte sizes, currency display text, and locale-aware numerals.
 
-version: 4.0.0
+version: 4.1.0
 repository: https://github.com/medz/numeral.dart
 
 environment:

@@ -1,4 +1,4 @@
-## Unreleased
+## 4.1.0
 
 - Added a built-in `es.dart` language path with Spanish compact units and
   cardinal number formatting/parsing.
