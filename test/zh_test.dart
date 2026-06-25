@@ -68,17 +68,26 @@ void main() {
         '两千万': 20000000,
         '二亿': 200000000,
         '两亿': 200000000,
+        '一百二': 120,
+        '两百五': 250,
+        '一千二': 1200,
+        '一千二百三': 1230,
         '一千零一十': 1010,
         '一千零十': 1010,
         '一千零二十': 1020,
         '一千零二十一': 1021,
+        '一万二': 12000,
+        '一万二千三': 12300,
+        '一万二千三百四': 12340,
         '一万零一十': 10010,
         '一万零十': 10010,
+        '一万零二': 10002,
         '一万零二十': 10020,
         '一万零二十一': 10021,
         '一万二千': 12000,
         '一万两千': 12000,
         '两万二千': 22000,
+        '一亿二': 120000000,
         '二亿两千万': 220000000,
         '两亿两千万': 220000000,
         '一百二十三万四千五百六十七': 1234567,
@@ -97,6 +106,9 @@ void main() {
       expect(codec.tryParse('一二'), isNull);
       expect(codec.tryParse('一百零'), isNull);
       expect(codec.tryParse('零一'), isNull);
+      expect(codec.tryParse('两十'), isNull);
+      expect(codec.tryParse('两十二'), isNull);
+      expect(codec.tryParse('一万零两十'), isNull);
       expect(codec.tryParse('万'), isNull);
     });
 
@@ -126,10 +138,13 @@ void main() {
       expect(codec.format(1234567), '壹佰贰拾叁万肆仟伍佰陆拾柒');
 
       expect(codec.parse('壹佰万'), 1000000);
+      expect(codec.parse('壹佰零贰'), 102);
       expect(codec.parse('壹万零壹拾'), 10010);
       expect(codec.parse('壹佰贰拾叁万肆仟伍佰陆拾柒'), 1234567);
       expect(codec.tryParse('一百万'), isNull);
       expect(codec.tryParse('壹贰'), isNull);
+      expect(codec.tryParse('壹佰贰'), isNull);
+      expect(codec.tryParse('壹仟贰佰叁'), isNull);
       expect(codec.tryParse('壹佰零'), isNull);
       expect(codec.tryParse('零壹'), isNull);
       expect(codec.tryParse('万'), isNull);

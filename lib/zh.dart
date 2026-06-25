@@ -190,7 +190,8 @@ final class ChineseYearCodec extends NumeralCodec<int> {
 /// Converts integers to and from Simplified Chinese cardinal numerals.
 ///
 /// Formatting emits a normalized form with `二`. Parsing also accepts common
-/// `两` variants and elided `一十` variants such as `一万零十`.
+/// `两` variants, elided `一十` variants such as `一万零十`, and trailing-unit
+/// omissions such as `一万二`.
 final class ChineseCardinalCodec extends _ChineseSectionIntegerCodec {
   /// Creates a Simplified Chinese cardinal codec.
   const ChineseCardinalCodec()
@@ -204,6 +205,7 @@ final class ChineseCardinalCodec extends _ChineseSectionIntegerCodec {
           expectedDescription: 'Chinese cardinal number',
           unexpectedDescription: 'Unexpected Chinese cardinal token.',
           omitLeadingOneForTen: true,
+          allowTrailingUnitOmission: true,
         );
 
   static const _digits = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
@@ -295,9 +297,12 @@ abstract base class _ChineseSectionIntegerCodec extends NumeralCodec<int> {
     required this.expectedDescription,
     required this.unexpectedDescription,
     this.omitLeadingOneForTen = false,
+    this.allowTrailingUnitOmission = false,
   });
 
   static const _smallScales = [1, 10, 100, 1000];
+  static const _initialSmallUnit = 10000;
+  static const _initialSectionUnit = 1000000000000000000;
 
   final List<String> digitSymbols;
   final List<String> smallUnits;
@@ -308,6 +313,7 @@ abstract base class _ChineseSectionIntegerCodec extends NumeralCodec<int> {
   final String expectedDescription;
   final String unexpectedDescription;
   final bool omitLeadingOneForTen;
+  final bool allowTrailingUnitOmission;
 
   @override
   String format(num value) {
@@ -374,19 +380,25 @@ abstract base class _ChineseSectionIntegerCodec extends NumeralCodec<int> {
     var total = 0;
     var section = 0;
     int? number;
-    var lastSmallUnit = 10000;
-    var lastSectionUnit = 1000000000000000000;
+    var numberAfterZero = false;
+    var numberIsAlternateTwo = false;
+    var lastSmallUnit = _initialSmallUnit;
+    var lastSectionUnit = _initialSectionUnit;
     for (final char in text.runes.map(String.fromCharCode)) {
       final digit = digitValues[char];
       if (digit != null) {
         if (number != null) {
           if (number == 0 && digit != 0 && (section > 0 || total > 0)) {
             number = digit;
+            numberAfterZero = true;
+            numberIsAlternateTwo = _isAlternateTwo(char);
             continue;
           }
           throw FormatException(unexpectedDescription, input);
         }
         number = digit;
+        numberAfterZero = false;
+        numberIsAlternateTwo = _isAlternateTwo(char);
         continue;
       }
 
@@ -397,12 +409,17 @@ abstract base class _ChineseSectionIntegerCodec extends NumeralCodec<int> {
         }
 
         final digit = number;
+        if (numberIsAlternateTwo && smallUnit == 10) {
+          throw FormatException(unexpectedDescription, input);
+        }
         if (digit == 0 && section == 0 && total == 0) {
           throw FormatException(unexpectedDescription, input);
         }
 
         section += (digit == null || digit == 0 ? 1 : digit) * smallUnit;
         number = null;
+        numberAfterZero = false;
+        numberIsAlternateTwo = false;
         lastSmallUnit = smallUnit;
         continue;
       }
@@ -425,7 +442,9 @@ abstract base class _ChineseSectionIntegerCodec extends NumeralCodec<int> {
         total += section * sectionUnit;
         section = 0;
         number = null;
-        lastSmallUnit = 10000;
+        numberAfterZero = false;
+        numberIsAlternateTwo = false;
+        lastSmallUnit = _initialSmallUnit;
         lastSectionUnit = sectionUnit;
         continue;
       }
@@ -437,9 +456,41 @@ abstract base class _ChineseSectionIntegerCodec extends NumeralCodec<int> {
       throw FormatException(unexpectedDescription, input);
     }
 
-    final value = total + section + (number ?? 0);
+    final trailing = number == null
+        ? 0
+        : _resolveTrailingNumber(
+            number,
+            numberAfterZero: numberAfterZero,
+            lastSmallUnit: lastSmallUnit,
+            lastSectionUnit: lastSectionUnit,
+            input: input,
+          );
+    final value = total + section + trailing;
     return negative ? -value : value;
   }
+
+  int _resolveTrailingNumber(
+    int number, {
+    required bool numberAfterZero,
+    required int lastSmallUnit,
+    required int lastSectionUnit,
+    required String input,
+  }) {
+    final omittedScale = _trailingOmittedScale(lastSmallUnit, lastSectionUnit);
+    if (!allowTrailingUnitOmission && !numberAfterZero && omittedScale > 1) {
+      throw FormatException(unexpectedDescription, input);
+    }
+    if (!allowTrailingUnitOmission || numberAfterZero) return number;
+    return number * omittedScale;
+  }
+
+  int _trailingOmittedScale(int lastSmallUnit, int lastSectionUnit) {
+    if (lastSmallUnit < _initialSmallUnit) return lastSmallUnit ~/ 10;
+    if (lastSectionUnit < _initialSectionUnit) return lastSectionUnit ~/ 10;
+    return 1;
+  }
+
+  bool _isAlternateTwo(String char) => char == '两';
 
   String _formatSection(int section, {required bool omitLeadingOneForTen}) {
     final buffer = StringBuffer();
