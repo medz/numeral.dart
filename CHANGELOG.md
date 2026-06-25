@@ -1,13 +1,14 @@
 ## 4.0.0
 
-- Rebuilt the public API around reusable formatter classes such as
-  `DecimalFormatter`, `CompactFormatter`, `PercentFormatter`,
-  `BytesFormatter`, and `CurrencyFormatter`.
-- Added reusable immutable formatters with `format`, `parse`, and `tryParse`.
+- Rebuilt the public API around reusable codec classes such as
+  `DecimalCodec`, `CompactCodec`, `PercentCodec`,
+  `BytesCodec`, and `CurrencyCodec`.
+- Added reusable immutable codecs with standard `encode`/`decode` support and
+  readable `format`, `parse`, and `tryParse` aliases.
 - Added direct parsing support for decimal numbers, compact suffixes,
   percentages, byte sizes, and display currency values.
 - Added built-in western and Chinese compact unit sets.
-- Added decimal and binary byte formatters.
+- Added decimal and binary byte codecs.
 - Removed the old `num.numeral()` / `beautiful` extension API.
 
 ## 3.1.2
