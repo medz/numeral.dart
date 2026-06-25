@@ -79,6 +79,13 @@ final class CurrencyCodec extends NumeralCodec<num> {
     }
 
     final parsed = style.parse(numberPart);
+    if (isNegative &&
+        (numberPart.trim().startsWith('+') || parsed.isNegative)) {
+      throw FormatException(
+        'Currency value must not contain multiple signs.',
+        input,
+      );
+    }
     return isNegative ? -parsed : parsed;
   }
 }

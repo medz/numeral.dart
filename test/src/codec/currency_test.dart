@@ -19,8 +19,10 @@ void main() {
       expect(usd.format(-1234.5), r'-$1,234.50');
       expect(usd.parse(r'$1,234.50'), 1234.5);
       expect(usd.parse(r'-$1,234.50'), -1234.5);
+      expect(usd.parse(r'$-1,234.50'), -1234.5);
       expect(cny.format(99), '99 元');
       expect(cny.parse('99 元'), 99);
+      expect(cny.parse('-99 元'), -99);
     });
 
     test('does not emit negative zero after rounding', () {
@@ -67,6 +69,17 @@ void main() {
       expect(usd.tryParse(r'$12,34.00'), isNull);
       expect(usd.tryParse(r'$1,,234.00'), isNull);
       expect(usd.tryParse(r'$1,234.00'), 1234);
+    });
+
+    test('rejects multiple currency signs', () {
+      final usd = CurrencyCodec(r'$');
+      final cny = CurrencyCodec('元', symbolOnRight: true);
+
+      expect(usd.tryParse(r'-$-1.00'), isNull);
+      expect(usd.tryParse(r'-$+1.00'), isNull);
+      expect(usd.tryParse(r'-$-∞'), isNull);
+      expect(cny.tryParse('--1.00元'), isNull);
+      expect(cny.tryParse('-+1.00元'), isNull);
     });
 
     test('formats special values with the currency symbol', () {
