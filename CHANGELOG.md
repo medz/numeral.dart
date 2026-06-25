@@ -1,3 +1,8 @@
+## Unreleased
+
+- Added a built-in `ja.dart` language path with Japanese compact units,
+  cardinal number formatting/parsing, and digit-by-digit year formatting.
+
 ## 4.0.0
 
 - Rebuilt the public API around reusable codec classes such as
