@@ -67,8 +67,26 @@ final class NumeralUnitSet {
     }
 
     var selected = 0;
+    num previousScale = 0;
     for (var index = 0; index < units.length; index += 1) {
-      if (magnitude >= units[index].scale) selected = index;
+      final scale = units[index].scale;
+      if (!scale.isFinite || scale <= 0) {
+        throw ArgumentError.value(
+          scale,
+          'unitSet',
+          'Unit scales must be finite and positive.',
+        );
+      }
+      if (scale <= previousScale) {
+        throw ArgumentError.value(
+          this,
+          'unitSet',
+          'Unit scales must be strictly ascending.',
+        );
+      }
+      previousScale = scale;
+
+      if (magnitude >= scale) selected = index;
     }
     return selected;
   }

@@ -45,5 +45,39 @@ void main() {
         throwsA(isA<ArgumentError>()),
       );
     });
+
+    test('rejects invalid unit scales when selecting a unit', () {
+      expect(
+        () => const NumeralUnitSet([
+          NumeralUnit(0, ''),
+        ]).indexFor(1),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => const NumeralUnitSet([
+          NumeralUnit(1, ''),
+          NumeralUnit(double.infinity, 'K'),
+        ]).indexFor(1),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('rejects non-ascending unit scales when selecting a unit', () {
+      expect(
+        () => const NumeralUnitSet([
+          NumeralUnit(1000, 'K'),
+          NumeralUnit(1, ''),
+        ]).indexFor(1000),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
+        () => const NumeralUnitSet([
+          NumeralUnit(1, ''),
+          NumeralUnit(1000, 'K'),
+          NumeralUnit(1000, 'thousand'),
+        ]).indexFor(1000),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
   });
 }
