@@ -1,7 +1,8 @@
 ## 4.0.0
 
-- Rebuilt the public API around top-level formatter factories such as
-  `decimal()`, `compact()`, `percent()`, `bytes()`, and `currency()`.
+- Rebuilt the public API around reusable formatter classes such as
+  `DecimalFormatter`, `CompactFormatter`, `PercentFormatter`,
+  `BytesFormatter`, and `CurrencyFormatter`.
 - Added reusable immutable formatters with `format`, `parse`, and `tryParse`.
 - Added direct parsing support for decimal numbers, compact suffixes,
   percentages, byte sizes, and display currency values.

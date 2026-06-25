@@ -1,14 +1,14 @@
 /// Lightweight number formatting and parsing for Dart.
 ///
-/// Import the package with an alias and create reusable formatters for the
+/// Import the package with an alias and create reusable formatter instances for
 /// numeric display scenarios in your app:
 ///
 /// ```dart
 /// import 'package:numeral/numeral.dart' as numeral;
 ///
-/// final fileSize = numeral.bytes(binary: true, maxFractionDigits: 1);
-/// final compact = numeral.compact(maxFractionDigits: 1);
-/// final percent = numeral.percent(maxFractionDigits: 2);
+/// final fileSize = numeral.BytesFormatter.binary(maxFractionDigits: 1);
+/// final compact = numeral.CompactFormatter(maxFractionDigits: 1);
+/// final percent = numeral.PercentFormatter(maxFractionDigits: 2);
 ///
 /// fileSize.format(1536); // 1.5 KiB
 /// compact.format(12345); // 12.3K

@@ -24,12 +24,12 @@ Import the package with an alias:
 import 'package:numeral/numeral.dart' as numeral;
 ```
 
-Create reusable formatters:
+Create reusable formatter instances:
 
 ```dart
-final fileSize = numeral.bytes(binary: true, maxFractionDigits: 1);
-final compact = numeral.compact(maxFractionDigits: 1);
-final ratio = numeral.percent(maxFractionDigits: 2);
+final fileSize = numeral.BytesFormatter.binary(maxFractionDigits: 1);
+final compact = numeral.CompactFormatter(maxFractionDigits: 1);
+final ratio = numeral.PercentFormatter(maxFractionDigits: 2);
 
 fileSize.format(1536); // 1.5 KiB
 fileSize.parse('1.5 KiB'); // 1536
@@ -46,7 +46,7 @@ ratio.parse('12.34%'); // 0.1234
 ### Decimal
 
 ```dart
-final amount = numeral.decimal(
+final amount = numeral.DecimalFormatter(
   minFractionDigits: 2,
   maxFractionDigits: 2,
 );
@@ -58,7 +58,7 @@ amount.parse('1,234,567.80'); // 1234567.8
 ### Compact
 
 ```dart
-final compact = numeral.compact(maxFractionDigits: 1);
+final compact = numeral.CompactFormatter(maxFractionDigits: 1);
 
 compact.format(1234); // 1.2K
 compact.format(999999); // 1M
@@ -68,7 +68,7 @@ compact.parse('3 million'); // 3000000
 Chinese compact units are built in:
 
 ```dart
-final zh = numeral.compact(unitSet: numeral.CompactUnitSet.chinese);
+final zh = numeral.CompactFormatter(unitSet: numeral.CompactUnitSet.chinese);
 
 zh.format(1234567); // 123.46万
 zh.parse('3.5万'); // 35000
@@ -77,7 +77,7 @@ zh.parse('3.5万'); // 35000
 ### Percent
 
 ```dart
-final percent = numeral.percent(maxFractionDigits: 1);
+final percent = numeral.PercentFormatter(maxFractionDigits: 1);
 
 percent.format(0.1234); // 12.3%
 percent.parse('12.3%'); // 0.123
@@ -86,8 +86,8 @@ percent.parse('12.3%'); // 0.123
 ### Bytes
 
 ```dart
-final decimalBytes = numeral.bytes();
-final binaryBytes = numeral.bytes(binary: true, maxFractionDigits: 1);
+final decimalBytes = numeral.BytesFormatter();
+final binaryBytes = numeral.BytesFormatter.binary(maxFractionDigits: 1);
 
 decimalBytes.format(1500); // 1.5 KB
 decimalBytes.parse('1.5 MB'); // 1500000
@@ -102,7 +102,7 @@ Currency formatting is display-oriented. Use a decimal or money type for
 financial calculation, then use Numeral to render and parse strings.
 
 ```dart
-final usd = numeral.currency(r'$');
+final usd = numeral.CurrencyFormatter(r'$');
 
 usd.format(1234.5); // $1,234.50
 usd.parse(r'$1,234.50'); // 1234.5
@@ -113,7 +113,7 @@ usd.parse(r'$1,234.50'); // 1234.5
 Every formatter has `parse` and `tryParse`:
 
 ```dart
-final bytes = numeral.bytes(binary: true);
+final bytes = numeral.BytesFormatter.binary();
 
 bytes.parse('1 KiB'); // 1024
 bytes.tryParse('bad input'); // null
@@ -121,11 +121,11 @@ bytes.tryParse('bad input'); // null
 
 `parse` returns the natural numeric type for the formatter:
 
-- `decimal().parse(...)` returns `num`.
-- `compact().parse(...)` returns `num`.
-- `percent().parse(...)` returns `double`.
-- `bytes().parse(...)` returns `int`.
-- `currency(...).parse(...)` returns `num`.
+- `DecimalFormatter.parse(...)` returns `num`.
+- `CompactFormatter.parse(...)` returns `num`.
+- `PercentFormatter.parse(...)` returns `double`.
+- `BytesFormatter.parse(...)` returns `int`.
+- `CurrencyFormatter.parse(...)` returns `num`.
 
 ## License
 

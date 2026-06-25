@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 void main() {
   group('decimal', () {
     test('formats grouped decimal values', () {
-      final formatter = numeral.decimal(
+      final formatter = numeral.DecimalFormatter(
         minFractionDigits: 2,
         maxFractionDigits: 2,
       );
@@ -17,7 +17,7 @@ void main() {
     });
 
     test('can truncate instead of rounding', () {
-      final formatter = numeral.decimal(
+      final formatter = numeral.DecimalFormatter(
         maxFractionDigits: 2,
         rounding: numeral.Rounding.truncate,
       );
@@ -27,7 +27,7 @@ void main() {
     });
 
     test('parses grouped values directly to num', () {
-      final formatter = numeral.decimal();
+      final formatter = numeral.DecimalFormatter();
 
       expect(formatter.parse('1,234.5'), 1234.5);
       expect(formatter.parse('-1,234'), -1234);
@@ -37,7 +37,7 @@ void main() {
 
   group('compact', () {
     test('formats western compact numbers', () {
-      final formatter = numeral.compact(maxFractionDigits: 1);
+      final formatter = numeral.CompactFormatter(maxFractionDigits: 1);
 
       expect(formatter.format(1234), '1.2K');
       expect(formatter.format(1234567), '1.2M');
@@ -45,14 +45,14 @@ void main() {
     });
 
     test('moves rounded overflow to the next unit', () {
-      final formatter = numeral.compact(maxFractionDigits: 0);
+      final formatter = numeral.CompactFormatter(maxFractionDigits: 0);
 
       expect(formatter.format(999999), '1M');
       expect(formatter.format(999999999), '1B');
     });
 
     test('supports Chinese compact units', () {
-      final formatter = numeral.compact(
+      final formatter = numeral.CompactFormatter(
         unitSet: numeral.CompactUnitSet.chinese,
         maxFractionDigits: 2,
       );
@@ -62,8 +62,10 @@ void main() {
     });
 
     test('parses compact suffixes directly to num', () {
-      final formatter = numeral.compact();
-      final zh = numeral.compact(unitSet: numeral.CompactUnitSet.chinese);
+      final formatter = numeral.CompactFormatter();
+      final zh = numeral.CompactFormatter(
+        unitSet: numeral.CompactUnitSet.chinese,
+      );
 
       expect(formatter.parse('1.2K'), 1200);
       expect(formatter.parse('3 million'), 3000000);
@@ -75,14 +77,14 @@ void main() {
 
   group('percent', () {
     test('formats ratios as percentages', () {
-      final formatter = numeral.percent(maxFractionDigits: 1);
+      final formatter = numeral.PercentFormatter(maxFractionDigits: 1);
 
       expect(formatter.format(0.1234), '12.3%');
       expect(formatter.format(1), '100%');
     });
 
     test('parses percentages directly to double', () {
-      final formatter = numeral.percent();
+      final formatter = numeral.PercentFormatter();
 
       expect(formatter.parse('12.5%'), 0.125);
       expect(formatter.parse('-50%'), -0.5);
@@ -92,7 +94,7 @@ void main() {
 
   group('bytes', () {
     test('formats decimal byte sizes', () {
-      final formatter = numeral.bytes(maxFractionDigits: 1);
+      final formatter = numeral.BytesFormatter(maxFractionDigits: 1);
 
       expect(formatter.format(999), '999 B');
       expect(formatter.format(1000), '1 KB');
@@ -101,7 +103,7 @@ void main() {
     });
 
     test('formats binary byte sizes', () {
-      final formatter = numeral.bytes(binary: true, maxFractionDigits: 1);
+      final formatter = numeral.BytesFormatter.binary(maxFractionDigits: 1);
 
       expect(formatter.format(1024), '1 KiB');
       expect(formatter.format(1536), '1.5 KiB');
@@ -109,8 +111,8 @@ void main() {
     });
 
     test('parses byte sizes directly to int', () {
-      final decimal = numeral.bytes();
-      final binary = numeral.bytes(binary: true);
+      final decimal = numeral.BytesFormatter();
+      final binary = numeral.BytesFormatter.binary();
 
       expect(decimal.parse('1 KB'), 1000);
       expect(decimal.parse('1.5 MB'), 1500000);
@@ -121,8 +123,8 @@ void main() {
 
   group('currency', () {
     test('formats and parses display currency values', () {
-      final usd = numeral.currency(r'$');
-      final cny = numeral.currency(
+      final usd = numeral.CurrencyFormatter(r'$');
+      final cny = numeral.CurrencyFormatter(
         '元',
         symbolOnRight: true,
         spaceBetweenSymbolAndNumber: true,

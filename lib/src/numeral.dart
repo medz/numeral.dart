@@ -24,121 +24,6 @@ abstract interface class NumeralFormatter<T extends num> {
   T? tryParse(String input);
 }
 
-/// Creates a formatter for ordinary decimal numbers.
-DecimalFormatter decimal({
-  bool grouping = true,
-  String groupSeparator = ',',
-  String decimalSeparator = '.',
-  int minFractionDigits = 0,
-  int maxFractionDigits = 3,
-  bool trimTrailingZeros = true,
-  Rounding rounding = Rounding.halfUp,
-}) {
-  return DecimalFormatter(
-    grouping: grouping,
-    groupSeparator: groupSeparator,
-    decimalSeparator: decimalSeparator,
-    minFractionDigits: minFractionDigits,
-    maxFractionDigits: maxFractionDigits,
-    trimTrailingZeros: trimTrailingZeros,
-    rounding: rounding,
-  );
-}
-
-/// Creates a formatter for compact values such as `1.2K` or `3.4M`.
-CompactFormatter compact({
-  CompactUnitSet unitSet = CompactUnitSet.westernShort,
-  String decimalSeparator = '.',
-  int minFractionDigits = 0,
-  int maxFractionDigits = 2,
-  bool trimTrailingZeros = true,
-  Rounding rounding = Rounding.halfUp,
-  bool compactOverflow = true,
-}) {
-  return CompactFormatter(
-    unitSet: unitSet,
-    decimalSeparator: decimalSeparator,
-    minFractionDigits: minFractionDigits,
-    maxFractionDigits: maxFractionDigits,
-    trimTrailingZeros: trimTrailingZeros,
-    rounding: rounding,
-    compactOverflow: compactOverflow,
-  );
-}
-
-/// Creates a formatter for percentage values.
-PercentFormatter percent({
-  String symbol = '%',
-  num scale = 100,
-  bool spaceBeforeSymbol = false,
-  bool requireSymbol = true,
-  String decimalSeparator = '.',
-  int minFractionDigits = 0,
-  int maxFractionDigits = 2,
-  bool trimTrailingZeros = true,
-  Rounding rounding = Rounding.halfUp,
-}) {
-  return PercentFormatter(
-    symbol: symbol,
-    scale: scale,
-    spaceBeforeSymbol: spaceBeforeSymbol,
-    requireSymbol: requireSymbol,
-    decimalSeparator: decimalSeparator,
-    minFractionDigits: minFractionDigits,
-    maxFractionDigits: maxFractionDigits,
-    trimTrailingZeros: trimTrailingZeros,
-    rounding: rounding,
-  );
-}
-
-/// Creates a formatter for byte counts.
-BytesFormatter bytes({
-  bool binary = false,
-  bool spaceBeforeUnit = true,
-  String decimalSeparator = '.',
-  int minFractionDigits = 0,
-  int maxFractionDigits = 2,
-  bool trimTrailingZeros = true,
-  Rounding rounding = Rounding.halfUp,
-}) {
-  return BytesFormatter(
-    unitSet: binary ? ByteUnitSet.binary : ByteUnitSet.decimal,
-    spaceBeforeUnit: spaceBeforeUnit,
-    decimalSeparator: decimalSeparator,
-    minFractionDigits: minFractionDigits,
-    maxFractionDigits: maxFractionDigits,
-    trimTrailingZeros: trimTrailingZeros,
-    rounding: rounding,
-  );
-}
-
-/// Creates a formatter for display-oriented currency values.
-CurrencyFormatter currency(
-  String symbol, {
-  bool symbolOnRight = false,
-  bool spaceBetweenSymbolAndNumber = false,
-  bool grouping = true,
-  String groupSeparator = ',',
-  String decimalSeparator = '.',
-  int minFractionDigits = 2,
-  int maxFractionDigits = 2,
-  bool trimTrailingZeros = false,
-  Rounding rounding = Rounding.halfUp,
-}) {
-  return CurrencyFormatter(
-    symbol: symbol,
-    symbolOnRight: symbolOnRight,
-    spaceBetweenSymbolAndNumber: spaceBetweenSymbolAndNumber,
-    grouping: grouping,
-    groupSeparator: groupSeparator,
-    decimalSeparator: decimalSeparator,
-    minFractionDigits: minFractionDigits,
-    maxFractionDigits: maxFractionDigits,
-    trimTrailingZeros: trimTrailingZeros,
-    rounding: rounding,
-  );
-}
-
 /// Formats ordinary decimal numbers.
 final class DecimalFormatter implements NumeralFormatter<num> {
   /// Creates a formatter for ordinary decimal numbers.
@@ -586,6 +471,24 @@ final class BytesFormatter implements NumeralFormatter<int> {
     }
   }
 
+  /// Creates a formatter for binary byte units such as KiB and MiB.
+  BytesFormatter.binary({
+    bool spaceBeforeUnit = true,
+    String decimalSeparator = '.',
+    int minFractionDigits = 0,
+    int maxFractionDigits = 2,
+    bool trimTrailingZeros = true,
+    Rounding rounding = Rounding.halfUp,
+  }) : this(
+          unitSet: ByteUnitSet.binary,
+          spaceBeforeUnit: spaceBeforeUnit,
+          decimalSeparator: decimalSeparator,
+          minFractionDigits: minFractionDigits,
+          maxFractionDigits: maxFractionDigits,
+          trimTrailingZeros: trimTrailingZeros,
+          rounding: rounding,
+        );
+
   /// Byte unit set used by this formatter.
   final ByteUnitSet unitSet;
 
@@ -652,8 +555,8 @@ final class BytesFormatter implements NumeralFormatter<int> {
 /// Formats display-oriented currency values.
 final class CurrencyFormatter implements NumeralFormatter<num> {
   /// Creates a currency formatter.
-  CurrencyFormatter({
-    required this.symbol,
+  CurrencyFormatter(
+    this.symbol, {
     this.symbolOnRight = false,
     this.spaceBetweenSymbolAndNumber = false,
     bool grouping = true,
