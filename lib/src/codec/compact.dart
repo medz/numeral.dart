@@ -62,6 +62,12 @@ final class CompactCodec extends NumeralCodec<num> {
 
     final match = _unitMatcher.match(trimmed);
     final parsedNumber = style.parse(match.number);
+    if (!parsedNumber.isFinite && match.number != trimmed) {
+      throw FormatException(
+        'Special compact values must not use units.',
+        input,
+      );
+    }
     return normalizeNum(parsedNumber * match.unit.scale);
   }
 

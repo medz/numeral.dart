@@ -58,6 +58,18 @@ void main() {
       expect(codec.tryParse('abc'), isNull);
     });
 
+    test('parses special values only without units', () {
+      final suffix = CompactCodec(unitSet: _westernUnits);
+      final prefix = CompactCodec(unitSet: _prefixUnits);
+
+      expect(suffix.parse('∞'), double.infinity);
+      expect(suffix.parse('-∞'), double.negativeInfinity);
+      expect(suffix.parse('NaN').isNaN, isTrue);
+      expect(suffix.tryParse('∞K'), isNull);
+      expect(suffix.tryParse('NaNK'), isNull);
+      expect(prefix.tryParse('k ∞'), isNull);
+    });
+
     test('round-trips prefix compact units', () {
       final codec = CompactCodec(
         unitSet: _prefixUnits,
