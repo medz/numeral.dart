@@ -205,6 +205,7 @@ final class ChineseCardinalCodec extends _ChineseSectionIntegerCodec {
           expectedDescription: 'Chinese cardinal number',
           unexpectedDescription: 'Unexpected Chinese cardinal token.',
           omitLeadingOneForTen: true,
+          allowImplicitOneForSmallUnit: true,
           allowTrailingUnitOmission: true,
         );
 
@@ -251,6 +252,7 @@ final class ChineseFinancialCodec extends _ChineseSectionIntegerCodec {
           sectionUnitValues: _sectionUnitValues,
           expectedDescription: 'Chinese financial numeral',
           unexpectedDescription: 'Unexpected Chinese financial token.',
+          allowImplicitOneForSmallUnit: false,
         );
 
   static const digits = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
@@ -297,6 +299,7 @@ abstract base class _ChineseSectionIntegerCodec extends NumeralCodec<int> {
     required this.expectedDescription,
     required this.unexpectedDescription,
     this.omitLeadingOneForTen = false,
+    this.allowImplicitOneForSmallUnit = true,
     this.allowTrailingUnitOmission = false,
   });
 
@@ -313,6 +316,7 @@ abstract base class _ChineseSectionIntegerCodec extends NumeralCodec<int> {
   final String expectedDescription;
   final String unexpectedDescription;
   final bool omitLeadingOneForTen;
+  final bool allowImplicitOneForSmallUnit;
   final bool allowTrailingUnitOmission;
 
   @override
@@ -409,6 +413,9 @@ abstract base class _ChineseSectionIntegerCodec extends NumeralCodec<int> {
         }
 
         final digit = number;
+        if ((digit == null || digit == 0) && !allowImplicitOneForSmallUnit) {
+          throw FormatException(unexpectedDescription, input);
+        }
         if (numberIsAlternateTwo && smallUnit == 10) {
           throw FormatException(unexpectedDescription, input);
         }

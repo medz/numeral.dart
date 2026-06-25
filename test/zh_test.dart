@@ -134,13 +134,22 @@ void main() {
       expect(codec.format(101), '壹佰零壹');
       expect(codec.format(10001), '壹万零壹');
       expect(codec.format(10010), '壹万零壹拾');
+      expect(codec.format(100000), '壹拾万');
       expect(codec.format(1000000), '壹佰万');
       expect(codec.format(1234567), '壹佰贰拾叁万肆仟伍佰陆拾柒');
 
+      expect(codec.parse('壹拾万'), 100000);
       expect(codec.parse('壹佰万'), 1000000);
       expect(codec.parse('壹佰零贰'), 102);
       expect(codec.parse('壹万零壹拾'), 10010);
       expect(codec.parse('壹佰贰拾叁万肆仟伍佰陆拾柒'), 1234567);
+      expect(codec.tryParse('拾'), isNull);
+      expect(codec.tryParse('佰'), isNull);
+      expect(codec.tryParse('仟'), isNull);
+      expect(codec.tryParse('拾万'), isNull);
+      expect(codec.tryParse('佰万'), isNull);
+      expect(codec.tryParse('壹佰零拾'), isNull);
+      expect(codec.tryParse('壹万零拾'), isNull);
       expect(codec.tryParse('一百万'), isNull);
       expect(codec.tryParse('壹贰'), isNull);
       expect(codec.tryParse('壹佰贰'), isNull);
@@ -154,6 +163,7 @@ void main() {
       final codec = zh.rmb();
 
       expect(codec.format(0), '人民币零元整');
+      expect(codec.format(100000), '人民币壹拾万元整');
       expect(codec.format(1000000), '人民币壹佰万元整');
       expect(
         codec.format(1234567.89),
@@ -162,6 +172,7 @@ void main() {
       expect(codec.format(100.01), '人民币壹佰元零壹分');
       expect(codec.format(0.1), '人民币壹角');
 
+      expect(codec.parse('人民币壹拾万元整'), 100000);
       expect(codec.parse('人民币壹佰万元整'), 1000000);
       expect(
         codec.parse('人民币壹佰贰拾叁万肆仟伍佰陆拾柒元捌角玖分'),
@@ -169,6 +180,9 @@ void main() {
       );
       expect(codec.parse('人民币壹佰元零壹分'), 100.01);
       expect(codec.parse('人民币壹角'), 0.1);
+      expect(codec.tryParse('人民币拾万元整'), isNull);
+      expect(codec.tryParse('人民币佰万元整'), isNull);
+      expect(codec.tryParse('人民币壹万零拾元整'), isNull);
       expect(codec.tryParse('人民币整'), isNull);
       expect(codec.tryParse('人民币元整'), isNull);
       expect(codec.tryParse('人民币壹佰元零零'), isNull);
