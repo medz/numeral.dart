@@ -69,6 +69,10 @@ void main() {
         () => PercentCodec(scale: double.nan),
         throwsA(isA<ArgumentError>()),
       );
+      expect(
+        () => PercentCodec(maxFractionDigits: 21),
+        throwsA(isA<ArgumentError>()),
+      );
       expect(() => PercentCodec(symbol: ''), throwsA(isA<ArgumentError>()));
     });
   });

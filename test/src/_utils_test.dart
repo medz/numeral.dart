@@ -46,6 +46,7 @@ void main() {
     test('validation helpers reject invalid input', () {
       expect(() => checkFractionDigits(-1, 1), throwsA(isA<ArgumentError>()));
       expect(() => checkFractionDigits(0, -1), throwsA(isA<ArgumentError>()));
+      expect(() => checkFractionDigits(0, 21), throwsA(isA<ArgumentError>()));
       expect(() => checkFractionDigits(2, 1), throwsA(isA<ArgumentError>()));
       expect(() => checkNotEmpty('', 'value'), throwsA(isA<ArgumentError>()));
     });

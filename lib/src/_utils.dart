@@ -66,6 +66,8 @@ String stripSuffix(String input, String suffix, {required bool require}) {
 }
 
 void checkFractionDigits(int minFractionDigits, int maxFractionDigits) {
+  const maxSupportedFractionDigits = 20;
+
   if (minFractionDigits < 0) {
     throw ArgumentError.value(
       minFractionDigits,
@@ -78,6 +80,13 @@ void checkFractionDigits(int minFractionDigits, int maxFractionDigits) {
       maxFractionDigits,
       'maxFractionDigits',
       'Must not be negative.',
+    );
+  }
+  if (maxFractionDigits > maxSupportedFractionDigits) {
+    throw ArgumentError.value(
+      maxFractionDigits,
+      'maxFractionDigits',
+      'Must not be greater than $maxSupportedFractionDigits.',
     );
   }
   if (minFractionDigits > maxFractionDigits) {

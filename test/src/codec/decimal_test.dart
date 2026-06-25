@@ -104,6 +104,10 @@ void main() {
         throwsA(isA<ArgumentError>()),
       );
       expect(
+        () => DecimalCodec(maxFractionDigits: 21),
+        throwsA(isA<ArgumentError>()),
+      );
+      expect(
         () => DecimalCodec(decimalSeparator: ''),
         throwsA(isA<ArgumentError>()),
       );
