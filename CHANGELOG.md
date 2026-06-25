@@ -1,3 +1,8 @@
+## Unreleased
+
+- Added a built-in `zh_hant.dart` language path with Traditional Chinese
+  compact units, cardinal numbers, year numbers, and financial numerals.
+
 ## 4.0.0
 
 - Rebuilt the public API around reusable codec classes such as
