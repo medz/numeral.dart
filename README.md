@@ -187,10 +187,15 @@ import 'package:numeral/zh.dart' as zh;
 
 final compact = zh.compact(maxFractionDigits: 2);
 final words = zh.cardinal();
+final financial = zh.financial();
+final rmb = zh.rmb();
 
 compact.format(1234567); // 123.46万
 words.format(1000000); // 一百万
 words.parse('一百万'); // 1000000
+financial.format(1000000); // 壹佰万
+rmb.format(1000000); // 人民币壹佰万元整
+rmb.format(1234567.89); // 人民币壹佰贰拾叁万肆仟伍佰陆拾柒元捌角玖分
 ```
 
 External packages can build the same style of language path by reusing

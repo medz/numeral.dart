@@ -238,5 +238,51 @@ void main() {
       expect(codec.parse('一百二十三万四千五百六十七'), 1234567);
       expect(codec.tryParse('not a number'), isNull);
     });
+
+    test('formats and parses Simplified Chinese financial numerals', () {
+      final codec = zh.financial();
+
+      expect(codec.format(0), '零');
+      expect(codec.format(10), '壹拾');
+      expect(codec.format(101), '壹佰零壹');
+      expect(codec.format(10001), '壹万零壹');
+      expect(codec.format(1000000), '壹佰万');
+      expect(codec.format(1234567), '壹佰贰拾叁万肆仟伍佰陆拾柒');
+
+      expect(codec.parse('壹佰万'), 1000000);
+      expect(codec.parse('壹佰贰拾叁万肆仟伍佰陆拾柒'), 1234567);
+      expect(codec.tryParse('一百万'), isNull);
+    });
+
+    test('formats and parses RMB uppercase amounts', () {
+      final codec = zh.rmb();
+
+      expect(codec.format(0), '人民币零元整');
+      expect(codec.format(1000000), '人民币壹佰万元整');
+      expect(
+        codec.format(1234567.89),
+        '人民币壹佰贰拾叁万肆仟伍佰陆拾柒元捌角玖分',
+      );
+      expect(codec.format(100.01), '人民币壹佰元零壹分');
+      expect(codec.format(0.1), '人民币壹角');
+
+      expect(codec.parse('人民币壹佰万元整'), 1000000);
+      expect(
+        codec.parse('人民币壹佰贰拾叁万肆仟伍佰陆拾柒元捌角玖分'),
+        1234567.89,
+      );
+      expect(codec.parse('人民币壹佰元零壹分'), 100.01);
+      expect(codec.parse('人民币壹角'), 0.1);
+      expect(codec.tryParse('人民币整'), isNull);
+      expect(codec.tryParse('人民币壹佰元零零'), isNull);
+    });
+
+    test('supports RMB uppercase amount options', () {
+      final noPrefix = zh.rmb(prefix: '');
+      final jiaoExact = zh.rmb(writeWholeSuffixForJiao: true);
+
+      expect(noPrefix.format(100), '壹佰元整');
+      expect(jiaoExact.format(0.1), '人民币壹角整');
+    });
   });
 }

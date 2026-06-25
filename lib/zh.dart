@@ -40,6 +40,22 @@ CompactCodec compact({
 /// Creates a Simplified Chinese cardinal number codec.
 ChineseCardinalCodec cardinal() => zh.cardinal();
 
+/// Creates a Simplified Chinese financial numeral codec.
+ChineseFinancialCodec financial() => zh.financial();
+
+/// Creates a Simplified Chinese RMB amount codec.
+ChineseRmbCodec rmb({
+  String prefix = '人民币',
+  String wholeSuffix = '整',
+  bool writeWholeSuffixForJiao = false,
+}) {
+  return zh.rmb(
+    prefix: prefix,
+    wholeSuffix: wholeSuffix,
+    writeWholeSuffixForJiao: writeWholeSuffixForJiao,
+  );
+}
+
 /// Simplified Chinese numerals language pack.
 final class ChineseNumerals implements NumeralLanguage {
   /// Creates a Simplified Chinese numerals language pack.
@@ -73,6 +89,22 @@ final class ChineseNumerals implements NumeralLanguage {
 
   /// Creates a Simplified Chinese cardinal number codec.
   ChineseCardinalCodec cardinal() => const ChineseCardinalCodec();
+
+  /// Creates a Simplified Chinese financial numeral codec.
+  ChineseFinancialCodec financial() => const ChineseFinancialCodec();
+
+  /// Creates a Simplified Chinese RMB amount codec.
+  ChineseRmbCodec rmb({
+    String prefix = '人民币',
+    String wholeSuffix = '整',
+    bool writeWholeSuffixForJiao = false,
+  }) {
+    return ChineseRmbCodec(
+      prefix: prefix,
+      wholeSuffix: wholeSuffix,
+      writeWholeSuffixForJiao: writeWholeSuffixForJiao,
+    );
+  }
 }
 
 /// Converts integers to and from Simplified Chinese cardinal numerals.
@@ -229,6 +261,352 @@ final class ChineseCardinalCodec extends NumeralCodec<int> {
     var value = 1;
     for (var index = 0; index < exponent; index += 1) {
       value *= 10;
+    }
+    return value;
+  }
+}
+
+/// Converts integers to and from Simplified Chinese financial numerals.
+final class ChineseFinancialCodec extends NumeralCodec<int> {
+  /// Creates a Simplified Chinese financial numeral codec.
+  const ChineseFinancialCodec();
+
+  static const digits = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+  static const _smallUnits = ['', '拾', '佰', '仟'];
+  static const _sectionUnits = ['', '万', '亿', '兆', '京'];
+  static const _digitValues = {
+    '零': 0,
+    '壹': 1,
+    '贰': 2,
+    '貳': 2,
+    '叁': 3,
+    '參': 3,
+    '肆': 4,
+    '伍': 5,
+    '陆': 6,
+    '陸': 6,
+    '柒': 7,
+    '捌': 8,
+    '玖': 9,
+  };
+  static const _smallUnitValues = {
+    '拾': 10,
+    '佰': 100,
+    '仟': 1000,
+  };
+  static const _sectionUnitValues = {
+    '万': 10000,
+    '萬': 10000,
+    '亿': 100000000,
+    '億': 100000000,
+    '兆': 1000000000000,
+    '京': 10000000000000000,
+  };
+
+  @override
+  String format(num value) {
+    if (!value.isFinite || value % 1 != 0) {
+      throw ArgumentError.value(value, 'value', 'Must be a finite integer.');
+    }
+
+    final integer = value.toInt();
+    if (integer == 0) return digits[0];
+    if (integer < 0) return '负${format(-integer)}';
+
+    final sections = <int>[];
+    var rest = integer;
+    while (rest > 0) {
+      sections.add(rest % 10000);
+      rest ~/= 10000;
+    }
+
+    final buffer = StringBuffer();
+    var zeroPending = false;
+    for (var index = sections.length - 1; index >= 0; index -= 1) {
+      final section = sections[index];
+      if (section == 0) {
+        if (buffer.isNotEmpty) zeroPending = true;
+        continue;
+      }
+
+      if (buffer.isNotEmpty && (zeroPending || section < 1000)) {
+        buffer.write(digits[0]);
+      }
+
+      buffer
+        ..write(_formatSection(section))
+        ..write(_sectionUnits[index]);
+      zeroPending = false;
+    }
+
+    return buffer.toString();
+  }
+
+  @override
+  int parse(String input) {
+    var text = input.trim();
+    if (text.isEmpty) {
+      throw FormatException('Expected a Chinese financial numeral.', input);
+    }
+
+    final negative = text.startsWith('负');
+    if (negative) {
+      text = text.substring(1);
+      if (text.isEmpty) {
+        throw FormatException('Expected a Chinese financial numeral.', input);
+      }
+    }
+
+    if (text == digits[0]) return 0;
+
+    var total = 0;
+    var section = 0;
+    var number = 0;
+    for (final char in text.runes.map(String.fromCharCode)) {
+      final digit = _digitValues[char];
+      if (digit != null) {
+        number = digit;
+        continue;
+      }
+
+      final smallUnit = _smallUnitValues[char];
+      if (smallUnit != null) {
+        section += (number == 0 ? 1 : number) * smallUnit;
+        number = 0;
+        continue;
+      }
+
+      final sectionUnit = _sectionUnitValues[char];
+      if (sectionUnit != null) {
+        section += number;
+        number = 0;
+        total += (section == 0 ? 1 : section) * sectionUnit;
+        section = 0;
+        continue;
+      }
+
+      throw FormatException('Unexpected Chinese financial token.', input);
+    }
+
+    final value = total + section + number;
+    return negative ? -value : value;
+  }
+
+  String _formatSection(int section) {
+    final buffer = StringBuffer();
+    var zeroPending = false;
+
+    for (var position = 3; position >= 0; position -= 1) {
+      final unit = _pow10(position);
+      final digit = section ~/ unit % 10;
+      if (digit == 0) {
+        if (buffer.isNotEmpty) zeroPending = true;
+        continue;
+      }
+
+      if (zeroPending) {
+        buffer.write(digits[0]);
+        zeroPending = false;
+      }
+
+      buffer
+        ..write(digits[digit])
+        ..write(_smallUnits[position]);
+    }
+
+    return buffer.toString();
+  }
+
+  int _pow10(int exponent) {
+    var value = 1;
+    for (var index = 0; index < exponent; index += 1) {
+      value *= 10;
+    }
+    return value;
+  }
+}
+
+/// Converts RMB amounts to and from Simplified Chinese uppercase amount text.
+final class ChineseRmbCodec extends NumeralCodec<num> {
+  /// Creates a Simplified Chinese RMB amount codec.
+  const ChineseRmbCodec({
+    this.prefix = '人民币',
+    this.wholeSuffix = '整',
+    this.writeWholeSuffixForJiao = false,
+  });
+
+  /// Text written before the amount.
+  final String prefix;
+
+  /// Suffix written when the amount has no lower unit.
+  ///
+  /// Common values are `整` and `正`.
+  final String wholeSuffix;
+
+  /// Whether [wholeSuffix] is written after exact jiao amounts.
+  final bool writeWholeSuffixForJiao;
+
+  static const _financial = ChineseFinancialCodec();
+
+  @override
+  String format(num value) {
+    final cents = _toCents(value);
+    if (cents < 0) return '负${format(-cents / 100)}';
+
+    final yuan = cents ~/ 100;
+    final jiao = cents ~/ 10 % 10;
+    final fen = cents % 10;
+    final buffer = StringBuffer(prefix);
+
+    if (yuan > 0 || (jiao == 0 && fen == 0)) {
+      buffer
+        ..write(_financial.format(yuan))
+        ..write('元');
+    }
+
+    if (jiao == 0 && fen == 0) {
+      buffer.write(wholeSuffix);
+      return buffer.toString();
+    }
+
+    if (yuan > 0 && jiao == 0) {
+      buffer.write('零');
+    }
+
+    if (jiao > 0) {
+      buffer
+        ..write(ChineseFinancialCodec.digits[jiao])
+        ..write('角');
+    }
+
+    if (fen > 0) {
+      buffer
+        ..write(ChineseFinancialCodec.digits[fen])
+        ..write('分');
+    } else if (writeWholeSuffixForJiao) {
+      buffer.write(wholeSuffix);
+    }
+
+    return buffer.toString();
+  }
+
+  @override
+  num parse(String input) {
+    var text = input.trim();
+    if (text.isEmpty) {
+      throw FormatException('Expected an RMB uppercase amount.', input);
+    }
+
+    final negative = text.startsWith('负');
+    if (negative) {
+      text = text.substring(1);
+      if (text.isEmpty) {
+        throw FormatException('Expected an RMB uppercase amount.', input);
+      }
+    }
+
+    if (prefix.isNotEmpty && text.startsWith(prefix)) {
+      text = text.substring(prefix.length);
+    }
+
+    if (text.endsWith(wholeSuffix)) {
+      text = text.substring(0, text.length - wholeSuffix.length);
+    } else if (text.endsWith('正')) {
+      text = text.substring(0, text.length - 1);
+    }
+
+    if (text.isEmpty) {
+      throw FormatException('Expected an RMB uppercase amount.', input);
+    }
+
+    var yuan = 0;
+    var lower = text;
+    final yuanIndex = text.indexOf('元');
+    if (yuanIndex >= 0) {
+      final yuanText = text.substring(0, yuanIndex);
+      yuan = yuanText.isEmpty ? 0 : _financial.parse(yuanText);
+      lower = text.substring(yuanIndex + 1);
+    }
+
+    if (lower.contains('角') || lower.contains('分')) {
+      lower = lower.replaceFirst(RegExp('^零+'), '');
+    } else if (lower.trim().isNotEmpty) {
+      throw FormatException('Unexpected RMB amount token.', input);
+    }
+
+    var jiao = 0;
+    var fen = 0;
+
+    final jiaoIndex = lower.indexOf('角');
+    if (jiaoIndex >= 0) {
+      final jiaoText = lower.substring(0, jiaoIndex);
+      jiao = _parseSingleDigit(jiaoText, input);
+      lower = lower.substring(jiaoIndex + 1);
+    }
+
+    final fenIndex = lower.indexOf('分');
+    if (fenIndex >= 0) {
+      final fenText = lower.substring(0, fenIndex);
+      fen = _parseSingleDigit(fenText, input);
+      lower = lower.substring(fenIndex + 1);
+    }
+
+    if (lower.trim().isNotEmpty) {
+      throw FormatException('Unexpected RMB amount token.', input);
+    }
+
+    final cents = yuan * 100 + jiao * 10 + fen;
+    final value = cents % 100 == 0 ? cents ~/ 100 : cents / 100;
+    return negative ? -value : value;
+  }
+
+  int _toCents(num value) {
+    if (!value.isFinite) {
+      throw ArgumentError.value(value, 'value', 'Must be finite.');
+    }
+
+    var text = value.toString();
+    final negative = text.startsWith('-');
+    if (negative) text = text.substring(1);
+
+    if (text.contains('e') || text.contains('E')) {
+      final scaled = value * 100;
+      final cents = scaled.round();
+      if ((scaled - cents).abs() <= 1e-7) return cents;
+      throw ArgumentError.value(
+        value,
+        'value',
+        'Must have no more than two decimal places.',
+      );
+    }
+
+    final parts = text.split('.');
+    final whole = int.parse(parts.first);
+    var fraction = parts.length == 1 ? '' : parts.last;
+    while (fraction.endsWith('0')) {
+      fraction = fraction.substring(0, fraction.length - 1);
+    }
+
+    if (fraction.length > 2) {
+      throw ArgumentError.value(
+        value,
+        'value',
+        'Must have no more than two decimal places.',
+      );
+    }
+
+    final cents = whole * 100 + int.parse(fraction.padRight(2, '0'));
+    return negative ? -cents : cents;
+  }
+
+  int _parseSingleDigit(String text, String input) {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) {
+      throw FormatException('Expected an RMB amount digit.', input);
+    }
+    final value = ChineseFinancialCodec._digitValues[trimmed];
+    if (value == null || value == 0) {
+      throw FormatException('Expected a non-zero RMB amount digit.', input);
     }
     return value;
   }
