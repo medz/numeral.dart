@@ -55,6 +55,39 @@ void main() {
       expect(match.unit.scale, 1);
     });
 
+    test('selects units by magnitude from the validated unit set', () {
+      final matcher = NumeralUnitMatcher(
+        const NumeralUnitSet([
+          NumeralUnit(1, ''),
+          NumeralUnit(1000, 'K'),
+          NumeralUnit(1000000, 'M'),
+        ]),
+      );
+
+      expect(matcher.length, 3);
+      expect(matcher.indexFor(0), 0);
+      expect(matcher.indexFor(999), 0);
+      expect(matcher.indexFor(1000), 1);
+      expect(matcher.indexFor(999999), 1);
+      expect(matcher.indexFor(1000000), 2);
+      expect(matcher.unitFor(1000000).symbol, 'M');
+      expect(matcher.unitAt(1).symbol, 'K');
+    });
+
+    test('keeps a stable snapshot of the validated unit set', () {
+      final units = [
+        const NumeralUnit(1, ''),
+        const NumeralUnit(1000, 'K'),
+      ];
+      final matcher = NumeralUnitMatcher(NumeralUnitSet(units));
+
+      units.add(const NumeralUnit(1000000, 'M'));
+
+      expect(matcher.length, 2);
+      expect(matcher.unitFor(1000000).symbol, 'K');
+      expect(matcher.match('1M').unit.scale, 1);
+    });
+
     test('rejects empty unit sets', () {
       expect(
         () => NumeralUnitMatcher(const NumeralUnitSet([])),

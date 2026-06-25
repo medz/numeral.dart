@@ -44,12 +44,12 @@ final class CompactCodec extends NumeralCodec<num> {
     final special = formatSpecial(value);
     if (special != null) return special;
 
-    var index = unitSet.indexFor(value.abs());
+    var index = _unitMatcher.indexFor(value.abs());
     if (compactOverflow) {
       index = _overflowIndex(value, index);
     }
 
-    final unit = unitSet.units[index];
+    final unit = _unitMatcher.unitAt(index);
     return unit.format(style.format(value / unit.scale));
   }
 
@@ -73,9 +73,9 @@ final class CompactCodec extends NumeralCodec<num> {
 
   int _overflowIndex(num value, int index) {
     var selected = index;
-    while (selected < unitSet.units.length - 1) {
-      final current = unitSet.units[selected];
-      final next = unitSet.units[selected + 1];
+    while (selected < _unitMatcher.length - 1) {
+      final current = _unitMatcher.unitAt(selected);
+      final next = _unitMatcher.unitAt(selected + 1);
       final displayed = style.parse(
         style.format(value / current.scale),
       );

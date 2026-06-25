@@ -6,11 +6,39 @@ final class NumeralUnitMatcher {
   NumeralUnitMatcher(NumeralUnitSet unitSet) : this._(_checkUnits(unitSet));
 
   NumeralUnitMatcher._(List<NumeralUnit> units)
-      : _fallback = units.first,
+      : _units = units,
+        _fallback = units.first,
         _tokens = _tokensFor(units);
 
+  final List<NumeralUnit> _units;
   final NumeralUnit _fallback;
   final List<({NumeralUnit unit, String token, String lowerToken})> _tokens;
+
+  /// Number of units in this matcher.
+  int get length => _units.length;
+
+  /// Returns the unit at [index].
+  NumeralUnit unitAt(int index) => _units[index];
+
+  /// Finds the largest unit whose scale is less than or equal to [magnitude].
+  int indexFor(num magnitude) {
+    var lower = 0;
+    var upper = _units.length;
+
+    while (lower < upper) {
+      final middle = lower + ((upper - lower) >> 1);
+      if (magnitude >= _units[middle].scale) {
+        lower = middle + 1;
+      } else {
+        upper = middle;
+      }
+    }
+
+    return lower == 0 ? 0 : lower - 1;
+  }
+
+  /// Finds the largest unit whose scale is less than or equal to [magnitude].
+  NumeralUnit unitFor(num magnitude) => _units[indexFor(magnitude)];
 
   /// Matches the longest known unit token in [input].
   ({String number, NumeralUnit unit}) match(String input) {
@@ -96,7 +124,7 @@ final class NumeralUnitMatcher {
       }
     }
 
-    return units;
+    return List.unmodifiable(units);
   }
 
   static List<({NumeralUnit unit, String token, String lowerToken})> _tokensFor(

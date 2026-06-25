@@ -138,7 +138,7 @@ final class BytesCodec extends NumeralCodec<int> {
       );
     }
 
-    final unit = unitSet.units[unitSet.indexFor(value.abs())];
+    final unit = _unitMatcher.unitFor(value.abs());
     return unit.format(
       style.format(value / unit.scale),
       space: spaceBeforeUnit,
