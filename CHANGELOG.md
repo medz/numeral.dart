@@ -1,5 +1,7 @@
 ## Unreleased
 
+- Added a built-in `es.dart` language path with Spanish compact units and
+  cardinal number formatting/parsing.
 - Added a built-in `ja.dart` language path with Japanese compact units,
   cardinal number formatting/parsing, and digit-by-digit year formatting.
 - Added a built-in `ko.dart` language path with Korean compact units,
