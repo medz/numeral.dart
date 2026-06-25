@@ -200,7 +200,8 @@ final class KoreanCardinalCodec extends NumeralCodec<int> {
       final section = sections[index];
       if (section == 0) continue;
 
-      final omitOneBeforeSectionUnit = index == 1 && section == 1;
+      final omitOneBeforeSectionUnit =
+          buffer.isEmpty && index == 1 && section == 1;
       if (!omitOneBeforeSectionUnit) {
         buffer.write(_formatSection(section));
       }
@@ -344,6 +345,7 @@ final class KoreanCardinalCodec extends NumeralCodec<int> {
         throw FormatException('Unexpected Korean cardinal token.', input);
       }
       if (unit >= lastUnit ||
+          (zeroPending && unitBeforeZero ~/ 10 == unit) ||
           (zeroPending && (!allowLeadingZero || section > 0 || sawUnit))) {
         throw FormatException('Unexpected Korean cardinal token.', input);
       }

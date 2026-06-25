@@ -56,6 +56,7 @@ void main() {
         1000000: '백만',
         10000000: '천만',
         100000000: '일억',
+        100010000: '일억일만',
         200000000: '이억',
         1000000000000: '일조',
         10000000000000000: '일경',
@@ -92,6 +93,7 @@ void main() {
         '천만': 10000000,
         '일천만': 10000000,
         '일억': 100000000,
+        '일억일만': 100010000,
         '일억 이천만': 120000000,
         '이억이천만': 220000000,
         '일억이천삼백사십오만육천칠백팔십구': 123456789,
@@ -112,6 +114,9 @@ void main() {
       expect(codec.tryParse('일이'), isNull);
       expect(codec.tryParse('영일'), isNull);
       expect(codec.tryParse('십영일'), isNull);
+      expect(codec.tryParse('백영십'), isNull);
+      expect(codec.tryParse('천영백'), isNull);
+      expect(codec.tryParse('일만영천'), isNull);
       expect(codec.tryParse('만영'), isNull);
       expect(codec.tryParse('만만'), isNull);
       expect(codec.tryParse('억만'), isNull);
